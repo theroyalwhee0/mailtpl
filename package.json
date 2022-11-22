@@ -1,7 +1,7 @@
 {
   "name": "@theroyalwhee0/mailtpl",
-  "version": "0.0.1",
-  "description": "Mailing Template Factory",
+  "version": "0.0.2",
+  "description": "Mail Template Library",
   "main": "dist/index.js",
   "author": "Adam Mill <hismajesty@theroyalwhee.com> (https://www.theroyalwhee.com)",
   "license": "Apache-2.0",
