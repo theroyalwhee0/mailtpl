@@ -6,9 +6,9 @@ A mail template library. Build templates in HTML and CSS and compile into HTML w
 
 
 ## Installation
-`npm install @theroyalwhee0/istype`  
+`npm install @theroyalwhee0/mailtpl`  
 *or*  
-`yarn add @theroyalwhee0/istype`  
+`yarn add @theroyalwhee0/mailtpl`  
 
 
 ## Examples
@@ -22,7 +22,7 @@ Running ```npm run test``` will run the test suite. Running ```npm run test-watc
 ## Links
 - GitHub: [https://github.com/theroyalwhee0/mailtpl](https://github.com/theroyalwhee0/mailtpl)
 - NPM: [https://www.npmjs.com/package/@theroyalwhee0/mailtpl](https://www.npmjs.com/package/@theroyalwhee0/mailtpl)
-- Changelog: [https://github.com/theroyalwhee0/sleepy/blob/main/mailtpl/changelog.md](https://github.com/theroyalwhee0/sleepy/blob/main/mailtpl/changelog.md)
+- Changelog: [https://github.com/theroyalwhee0/mailtpl/blob/main/changelog.md](https://github.com/theroyalwhee0/mailtpl/blob/main/changelog.md)
 
 
 ## Legal & License

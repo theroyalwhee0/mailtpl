@@ -4,6 +4,11 @@
 - Nothing
 
 
+## [0.0.2] - 2022-11-22
+### Added
+- Fix copy and paste errors.
+- Fix borken links.
+
 ## [0.0.1] - 2022-11-22
 ### Added
 - Working `buildFromString` function.
