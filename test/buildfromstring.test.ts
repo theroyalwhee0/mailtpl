@@ -146,7 +146,7 @@ describe('buildFromString', () => {
         const result = buildFromString(`
             <style>
                 table {
-                    attr-border: '0'; /* This will be made into an attribute */
+                    -attr-border: '0'; /* This will be made into an attribute */
                 }
             </style>
             <table><tbody><tr><td>Microcassette</td></tr></tbody></table>
@@ -162,7 +162,7 @@ describe('buildFromString', () => {
         const result = buildFromString(`
             <style>
                 table {
-                    attr-border: false;
+                    -attr-border: false;
                 }
             </style>
             <table border="0"><tbody><tr><td>Microcassette</td></tr></tbody></table>
