@@ -64,6 +64,34 @@ describe('buildFromString', () => {
         expect(result.subject()).to.equal(undefined);
         expect(result.html()).to.equal('<h1>A Microcassette is significantly smaller than a Compact Cassette</h1>');
     });
+    it('should support removing ids', () => {
+        const result = buildFromString(`
+            <h1 id="topic-microcassette" class="block-header">A Microcassette is significantly smaller than a Compact Cassette</h1>
+            <p class="block-text">Microcassettes have mostly been used for recording voice.</p>
+        `, {
+            removeIds: true,
+            removeClasses: false,
+        });
+        expect(result.subject()).to.equal(undefined);
+        expect(result.html()).to.equal(
+            '<h1 class="block-header">A Microcassette is significantly smaller than a Compact Cassette</h1>\n' +
+            '            <p class="block-text">Microcassettes have mostly been used for recording voice.</p>'
+        );
+    });
+    it('should support removing classes', () => {
+        const result = buildFromString(`
+            <h1 id="topic-microcassette" class="block-header">A Microcassette is significantly smaller than a Compact Cassette</h1>
+            <p class="block-text">Microcassettes have mostly been used for recording voice.</p>
+        `, {
+            removeClasses: true,
+            removeIds: false,
+        });
+        expect(result.subject()).to.equal(undefined);
+        expect(result.html()).to.equal(
+            '<h1 id="topic-microcassette">A Microcassette is significantly smaller than a Compact Cassette</h1>\n' +
+            '            <p>Microcassettes have mostly been used for recording voice.</p>'
+        );
+    });
     it('should support inline styles', () => {
         const result = buildFromString(`
             <style><!--

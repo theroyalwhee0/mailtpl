@@ -151,3 +151,12 @@ export function applyStyles($: CheerioAPI, styles: Stylesheet[]) {
         }
     }
 }
+
+
+export function removeIdAttribs($: CheerioAPI) {
+    $.root().find('[id]').removeAttr('id');
+}
+
+export function removeClassAttribs($: CheerioAPI) {
+    $.root().find('[class]').removeAttr('class');
+}
