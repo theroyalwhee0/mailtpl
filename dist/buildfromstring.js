@@ -7,12 +7,20 @@ const elements_1 = require("./elements");
 function buildFromString(template, options) {
     const trim = options?.trim ?? true;
     const removeComments = options?.removeComments ?? true;
+    const removeIds = options?.removeIds ?? true;
+    const removeClasses = options?.removeClasses ?? true;
     const contents = trim ? template.trim() : template;
     const $ = (0, cheerio_1.load)(contents, null, false);
     const subject = (0, elements_1.getFirstMetaValue)($, contants_1.META_MAIL_SUBJECT);
     const styles = (0, elements_1.getOrderedStyles)($, options?.styles);
     (0, elements_1.applyStyles)($, styles);
     (0, elements_1.removeElements)($);
+    if (removeIds) {
+        (0, elements_1.removeIdAttribs)($);
+    }
+    if (removeClasses) {
+        (0, elements_1.removeClassAttribs)($);
+    }
     if (removeComments) {
         (0, elements_1.removeCommentNodes)($);
     }

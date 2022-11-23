@@ -40,3 +40,5 @@ export declare function applyNormalStyleRule($: CheerioAPI, ele: Cheerio<Element
 export declare function applyAttrStyleRule($: CheerioAPI, ele: Cheerio<Element>, rule: CssRule): void;
 export declare function applyStyleRule($: CheerioAPI, ele: Cheerio<Element>, rule: CssRule): void;
 export declare function applyStyles($: CheerioAPI, styles: Stylesheet[]): void;
+export declare function removeIdAttribs($: CheerioAPI): void;
+export declare function removeClassAttribs($: CheerioAPI): void;

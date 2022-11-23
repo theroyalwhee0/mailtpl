@@ -1,6 +1,8 @@
 import { StyleSource } from './css';
 export type MailTplOptions = {
     removeComments?: boolean;
+    removeIds?: boolean;
+    removeClasses?: boolean;
     trim?: boolean;
     styles?: StyleSource[];
 };
