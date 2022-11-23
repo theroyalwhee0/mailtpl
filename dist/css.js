@@ -59,7 +59,7 @@ function extractAttribFromRule(rule) {
     if (rule.declarations) {
         for (const decl of rule.declarations) {
             if (isRuleDeclaration(decl)) {
-                const match = /^attr-(.+)$/.exec(decl.property ?? '');
+                const match = /^-attr-(.+)$/.exec(decl.property ?? '');
                 if (match) {
                     const name = match[1];
                     const attr = {

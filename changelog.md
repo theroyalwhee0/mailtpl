@@ -1,9 +1,13 @@
 # Changelog
 
 ## [Unreleased]
+- None.
+
+
+## [0.1.0] - 2022-11-23
+### Added
 - Change 'attr-' properties to '-attr-'.
 - Add removeIds & removeClasses options to `buildFromString`. Both defaulting to `true`.
-
 
 ## [0.0.2] - 2022-11-22
 ### Added

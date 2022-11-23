@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.applyStyles = exports.applyStyleRule = exports.applyAttrStyleRule = exports.applyNormalStyleRule = exports.removeElements = exports.removeCommentNodes = exports.isComment = exports.getOrderedStyles = exports.getTextOrComment = exports.getOrderedStyleElements = exports.getFirstMetaValue = exports.getFirstMeta = void 0;
+exports.removeClassAttribs = exports.removeIdAttribs = exports.applyStyles = exports.applyStyleRule = exports.applyAttrStyleRule = exports.applyNormalStyleRule = exports.removeElements = exports.removeCommentNodes = exports.isComment = exports.getOrderedStyles = exports.getTextOrComment = exports.getOrderedStyleElements = exports.getFirstMetaValue = exports.getFirstMeta = void 0;
 const istype_1 = require("@theroyalwhee0/istype");
 const css_1 = require("css");
 const css_2 = require("./css");
@@ -156,4 +156,12 @@ function applyStyles($, styles) {
     }
 }
 exports.applyStyles = applyStyles;
+function removeIdAttribs($) {
+    $.root().find('[id]').removeAttr('id');
+}
+exports.removeIdAttribs = removeIdAttribs;
+function removeClassAttribs($) {
+    $.root().find('[class]').removeAttr('class');
+}
+exports.removeClassAttribs = removeClassAttribs;
 //# sourceMappingURL=elements.js.map
