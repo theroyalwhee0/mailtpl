@@ -1,0 +1,33 @@
+import yargs from 'yargs';
+import { hideBin } from 'yargs/helpers';
+
+export interface ArgvShape {
+    [key: string]: unknown;
+    _: (string | number)[];
+    $0: string;
+    files: string[];
+    output: string | undefined
+}
+
+export function getArgv(value?: string[], exit = true): ArgvShape {
+    value = value ?? process.argv;
+    return yargs(hideBin(value))
+        .scriptName('mailtpl')
+        .command(
+            '$0 [options] <files..>',
+            'Compile the source files.', (yargs) => {
+                return yargs.positional('files', {
+                    describe: 'Source files to process. May include CSS files.',
+                }).option('output', {
+                    alias: 'o',
+                    describe: 'Output results as files to specified folder.',
+                    type: 'string'
+                })
+            })
+        .demandCommand(1)
+        .help()
+        .alias('h', 'help')
+        .exitProcess(exit)
+        .strict()
+        .parseSync() as ArgvShape;
+}
