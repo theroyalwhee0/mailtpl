@@ -26,7 +26,7 @@
   },
   "dependencies": {
     "@theroyalwhee0/istype": "3.0.4",
-    "@theroyalwhee0/mailtpl": "0.1.0",
+    "@theroyalwhee0/mailtpl": "0.1.1",
     "mkdirp": "1.0.4",
     "yargs": "17.6.2"
   },

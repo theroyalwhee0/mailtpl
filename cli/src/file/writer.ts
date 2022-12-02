@@ -3,13 +3,16 @@ import fs from 'node:fs/promises';
 import path from "node:path";
 import { ITemplateWriter } from "../writer";
 import mkdirp from 'mkdirp';
+import { randomUUID } from "node:crypto";
 
 export class FileWriter implements ITemplateWriter {
 
     #folder: string;
+    #ext: string;
 
-    constructor(folder: string) {
+    constructor(folder: string, ext: string = '.html') {
         this.#folder = path.resolve(folder);
+        this.#ext = ext;
     }
 
     async setup() {
@@ -17,7 +20,11 @@ export class FileWriter implements ITemplateWriter {
     }
 
     async write(template: MailingTemplate): Promise<void> {
-        const filePath = path.resolve(this.#folder, 'filename.html');
+        const name = template.ident();
+        if (!name) {
+            throw new Error(`Template has no ident to use as a filename.`);
+        }
+        const filePath = path.resolve(this.#folder, name) + this.#ext;
         const html = template.html();
         await fs.writeFile(filePath, html, 'utf8');
     }

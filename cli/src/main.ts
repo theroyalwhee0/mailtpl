@@ -29,13 +29,11 @@ export async function main() {
     await writer.setup();
     // Process HTML files.
     for (const fileName of files.html ?? []) {
-        const sourceName = path.basename(fileName).replace(/\.html?$/, '');
-        console.log("fileName", sourceName);
+        const ident = path.basename(fileName).replace(/\.html?$/, '');
         const content = await fs.readFile(fileName, 'utf8');
         const template = buildFromString(content, {
-            styles,
-            // source: fileName,
-            // sourceName,
+            styles, ident,
+            source: fileName,
         });
         await writer.write(template);
     }
