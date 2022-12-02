@@ -19,11 +19,35 @@ describe('buildFromString', () => {
         expect(result.subject()).to.equal(undefined);
         expect(result.html()).to.equal('');
     });
-    it('should support known metadata values', () => {
+    it('should support mail/subject metadata values', () => {
         const result = buildFromString(`
             <meta name='mail/subject' value='Have you heard of Microcassettes?'>
         `);
         expect(result.subject()).to.equal('Have you heard of Microcassettes?');
+        expect(result.ident()).to.equal(undefined);
+        expect(result.fromEmail()).to.equal(undefined);
+        expect(result.fromName()).to.equal(undefined);
+        expect(result.html()).to.equal('');
+    });
+    it('should support mail/ident metadata values', () => {
+        const result = buildFromString(`
+            <meta name='mail/ident' value='microcassettes-2022'>
+        `);
+        expect(result.ident()).to.equal('microcassettes-2022');
+        expect(result.html()).to.equal('');
+    });
+    it('should support mail/from-name metadata values', () => {
+        const result = buildFromString(`
+            <meta name='mail/from-name' value='Rumble'>
+        `);
+        expect(result.fromName()).to.equal('Rumble');
+        expect(result.html()).to.equal('');
+    });
+    it('should support mail/from-email metadata values', () => {
+        const result = buildFromString(`
+            <meta name='mail/from-email' value='rumble@microcassettes.example'>
+        `);
+        expect(result.fromEmail()).to.equal('rumble@microcassettes.example');
         expect(result.html()).to.equal('');
     });
     it('should throw if there are repeat known metadata values', () => {
@@ -205,5 +229,19 @@ describe('buildFromString', () => {
             'A Microcassette is significantly smaller than a Compact Cassette' +
             '</h1>'
         );
+    });
+    it('should support source and ident options', () => {
+        const result = buildFromString(
+            '<h1>The Microcassette (often written generically as microcassette) ' +
+            'is an audio storage medium, introduced by Olympus in 1969.</h1>', {
+            source: 'https://en.wikipedia.org/wiki/Microcassette',
+            ident: 'microcassette-2022',
+        });
+        expect(result.html()).to.equal(
+            '<h1>The Microcassette (often written generically as microcassette) ' +
+            'is an audio storage medium, introduced by Olympus in 1969.</h1>'
+        );
+        expect(result.ident()).to.equal('microcassette-2022');
+        expect(result.source()).to.equal('https://en.wikipedia.org/wiki/Microcassette');
     });
 });
