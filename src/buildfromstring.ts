@@ -1,5 +1,5 @@
 import { load as cheerioLoad } from 'cheerio';
-import { META_MAIL_SUBJECT } from './contants';
+import * as meta from './contants';
 import { StyleSource } from './css';
 import { applyStyles, getFirstMetaValue, getOrderedStyles, removeClassAttribs, removeCommentNodes, removeElements, removeIdAttribs } from './elements';
 
@@ -9,10 +9,17 @@ export type MailTplOptions = {
     removeClasses?: boolean, // Defaults to true.    
     trim?: boolean, // Defaults to true.
     styles?: StyleSource[]
+    source?: string,
+    ident?: string
 };
 
 export type MailingTemplate = {
+    source(): string | undefined,
     subject(): string | undefined,
+    name(): string | undefined,
+    ident(): string | undefined,
+    fromEmail(): string | undefined,
+    fromName(): string | undefined,
     html(): string,
 };
 
@@ -23,8 +30,13 @@ export function buildFromString(template: string, options?: MailTplOptions): Mai
     const removeClasses = options?.removeClasses ?? true;
     const contents = trim ? template.trim() : template;
     const $ = cheerioLoad(contents, null, false);
-    const subject = getFirstMetaValue($, META_MAIL_SUBJECT);
+    const subject = getFirstMetaValue($, meta.META_MAIL_SUBJECT);
+    const name = getFirstMetaValue($, meta.META_MAIL_NAME);
+    const ident = options?.ident ?? getFirstMetaValue($, meta.META_MAIL_IDENT);
+    const fromEmail = getFirstMetaValue($, meta.META_MAIL_FROMEMAIL);
+    const fromName = getFirstMetaValue($, meta.META_MAIL_FROMNAME);
     const styles = getOrderedStyles($, options?.styles);
+    const source = options?.source ?? '';
     applyStyles($, styles);
     removeElements($);
     if (removeIds) {
@@ -41,6 +53,21 @@ export function buildFromString(template: string, options?: MailTplOptions): Mai
         html = html.trim();
     }
     return {
+        source() {
+            return source;
+        },
+        name() {
+            return name;
+        },
+        ident() {
+            return ident;
+        },
+        fromEmail() {
+            return fromEmail;
+        },
+        fromName() {
+            return fromName;
+        },
         html() {
             return html;
         },

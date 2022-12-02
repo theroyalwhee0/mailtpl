@@ -2,7 +2,7 @@ import { isFunction, isString } from '@theroyalwhee0/istype';
 import { Cheerio, CheerioAPI, Element, Node } from 'cheerio';
 import { parse as parseCss, Rule as CssRule, Stylesheet } from 'css';
 import { extractAttribFromRule, isCssRule, stringifyRuleProps, StyleSource } from './css';
-import { META_MAIL_SUBJECT } from './contants';
+import * as meta from './contants';
 
 /**
  * Get the first meta element matching the name.
@@ -101,7 +101,10 @@ export function removeCommentNodes($: CheerioAPI) {
 
 export function removeElements($: CheerioAPI) {
     const root = $.root();
-    root.find(`meta[name=${META_MAIL_SUBJECT}]`).remove();
+    root.find(`meta[name=${meta.META_MAIL_SUBJECT}]`).remove();
+    root.find(`meta[name=${meta.META_MAIL_IDENT}]`).remove();
+    root.find(`meta[name=${meta.META_MAIL_FROMNAME}]`).remove();
+    root.find(`meta[name=${meta.META_MAIL_FROMEMAIL}]`).remove();
     root.find('style').remove();
 }
 
