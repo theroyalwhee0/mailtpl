@@ -3,6 +3,13 @@
 ## [Unreleased]
 - None.
 
+## [0.1.1] - 2022-12-02
+- Add additional meta mail items
+    - mail/name
+    - mail/ident
+    - mail/from-email
+    - mail/from-name
+- Add source and ident options.
 
 ## [0.1.0] - 2022-11-23
 ### Added
