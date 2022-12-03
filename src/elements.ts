@@ -101,6 +101,7 @@ export function removeCommentNodes($: CheerioAPI) {
 
 export function removeElements($: CheerioAPI) {
     const root = $.root();
+    root.find(`meta[name=${meta.META_MAIL_NAME}]`).remove();
     root.find(`meta[name=${meta.META_MAIL_SUBJECT}]`).remove();
     root.find(`meta[name=${meta.META_MAIL_IDENT}]`).remove();
     root.find(`meta[name=${meta.META_MAIL_FROMNAME}]`).remove();
