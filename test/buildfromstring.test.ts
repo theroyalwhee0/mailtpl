@@ -29,6 +29,21 @@ describe('buildFromString', () => {
         expect(result.fromName()).to.equal(undefined);
         expect(result.html()).to.equal('');
     });
+    it('should remove mail/* metadata values', () => {
+        const result = buildFromString(`
+            <meta name='mail/name' value='Microcassettes 2022'>
+            <meta name='mail/ident' value='microcassettes-2022'>
+            <meta name='mail/from-name' value='Rumble'>
+            <meta name='mail/from-email' value='rumble@microcassettes.example'>
+            <meta name='mail/subject' value='Have you heard of Microcassettes?'>
+        `);
+        expect(result.name()).to.equal('Microcassettes 2022');
+        expect(result.subject()).to.equal('Have you heard of Microcassettes?');
+        expect(result.ident()).to.equal('microcassettes-2022');
+        expect(result.fromEmail()).to.equal('rumble@microcassettes.example');
+        expect(result.fromName()).to.equal('Rumble');
+        expect(result.html()).to.equal('');
+    });
     it('should support mail/ident metadata values', () => {
         const result = buildFromString(`
             <meta name='mail/ident' value='microcassettes-2022'>
