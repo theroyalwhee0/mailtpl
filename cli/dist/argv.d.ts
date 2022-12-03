@@ -5,4 +5,8 @@ export interface ArgvShape {
     files: string[];
     output: string | undefined;
 }
+export declare enum WriterChoice {
+    File = "file",
+    Sparkpost = "sparkpost"
+}
 export declare function getArgv(value?: string[], exit?: boolean): ArgvShape;

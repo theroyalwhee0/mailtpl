@@ -9,6 +9,11 @@ export interface ArgvShape {
     output: string | undefined
 }
 
+export enum WriterChoice {
+    File = 'file',
+    Sparkpost = 'sparkpost'
+}
+
 export function getArgv(value?: string[], exit = true): ArgvShape {
     value = value ?? process.argv;
     return yargs(hideBin(value))
@@ -21,8 +26,12 @@ export function getArgv(value?: string[], exit = true): ArgvShape {
                 }).option('output', {
                     alias: 'o',
                     describe: 'Output results as files to specified folder.',
-                    type: 'string'
-                })
+                    type: 'string',
+                }).option('writer', {
+                    alias: 'w',
+                    describe: 'Select a template writer.',
+                    choices: [WriterChoice.File, WriterChoice.Sparkpost],
+                });
             })
         .demandCommand(1)
         .help()

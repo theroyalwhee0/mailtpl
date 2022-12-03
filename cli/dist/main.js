@@ -10,14 +10,18 @@ const path_1 = __importDefault(require("path"));
 const argv_1 = require("./argv");
 const writer_1 = require("./file/writer");
 const iter_1 = require("./iter");
+const writer_2 = require("./sparkpost/writer");
 async function main() {
     const argv = (0, argv_1.getArgv)();
     let writer;
     if (argv.output !== undefined) {
         writer = new writer_1.FileWriter(argv.output);
     }
+    else if (argv.writer === argv_1.WriterChoice.Sparkpost) {
+        writer = new writer_2.SparkpostWriter();
+    }
     else {
-        throw new Error(`No template writer specified.`);
+        throw new Error('No template writer specified.');
     }
     // Group source files.
     const files = (0, iter_1.group)((0, iter_1.tag)(argv.files ?? [], {

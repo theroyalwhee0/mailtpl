@@ -16,9 +16,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 var _FileWriter_folder, _FileWriter_ext;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.FileWriter = void 0;
+const mkdirp_1 = __importDefault(require("mkdirp"));
 const promises_1 = __importDefault(require("node:fs/promises"));
 const node_path_1 = __importDefault(require("node:path"));
-const mkdirp_1 = __importDefault(require("mkdirp"));
 class FileWriter {
     constructor(folder, ext = '.html') {
         _FileWriter_folder.set(this, void 0);
@@ -32,7 +32,7 @@ class FileWriter {
     async write(template) {
         const name = template.ident();
         if (!name) {
-            throw new Error(`Template has no ident to use as a filename.`);
+            throw new Error('Template has no ident to use as a filename.');
         }
         const filePath = node_path_1.default.resolve(__classPrivateFieldGet(this, _FileWriter_folder, "f"), name) + __classPrivateFieldGet(this, _FileWriter_ext, "f");
         const html = template.html();
