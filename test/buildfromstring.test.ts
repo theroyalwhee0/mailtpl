@@ -283,16 +283,14 @@ describe('buildFromString', () => {
             'Microcassettes have mostly been used for recording voice.\n' +
             'In particular, they are commonly used in dictation machines ' +
             '[ https://en.wikipedia.org/wiki/Dictation_machine ]' +
-            ' and answering machines. \n\n' +
+            ' and answering machines.\n\n' +
             '------------------------------------------------------------------------------\n\n' +
             '* Capacity *\n\n' +
-            '- MC60 (30 min per side at 2.4 cm/s) \n' +
-            '- MC10 \n' +
-            '- MC15 \n' +
-            '- MC30 \n' +
+            '- MC60 (30 min per side at 2.4 cm/s)\n' +
+            '- MC10\n' +
+            '- MC15\n' +
+            '- MC30\n' +
             '';
-        // console.log('@@', JSON.stringify(text));
-        // console.log('##', JSON.stringify(expected));
         expect(text).to.equal(expected);
     });
 });
