@@ -11,10 +11,6 @@ A mail template library. Build templates in HTML and CSS and compile into HTML w
 `yarn add @theroyalwhee0/mailtpl`  
 
 
-## Examples
-```ts
-```
-
 ## Testing.
 Running ```npm run test``` will run the test suite. Running ```npm run test-watch``` will run the test suite in watch mode.
 
