@@ -1,4 +1,4 @@
-import { Stylesheet, stringify, Rule, Node, Declaration, Comment } from 'css';
+import { Comment, Declaration, Node, Rule, stringify, Stylesheet } from 'css';
 
 /**
  * An attribute rule to be applied to the Element.
@@ -7,6 +7,14 @@ export type AttribRule = {
     name: string,
     value?: string,
     remove?: boolean
+};
+
+/**
+ * An text rule to be applied to the Element.
+ */
+export type TextRule = {
+    name: string,
+    value: string,
 };
 
 /**
@@ -64,39 +72,78 @@ export function stringifyRule(rule: Rule): string {
     return stringify(styles, { compress: true });
 }
 
+export function extractNormalRules(rule: Rule): Rule {
+    const cssRule: Rule = Object.assign({}, rule, {
+        declarations: undefined,
+    });
+    if (rule.declarations) {
+        cssRule.declarations = [];
+        for (const decl of rule.declarations) {
+            if (isRuleDeclaration(decl)) {
+                if (decl.property === undefined || !/^-(text|attr)-(.+)$/.test(decl.property)) {
+                    cssRule.declarations.push(decl);
+                }
+            }
+        }
+    }
+    return cssRule;
+}
+
 /**
- * Extract attributes from rule.
- * This removes the attribut rules from the rule.
+ * Extract attribute-rules from rule.
  * @param rule The rule to extract from.
- * @returns The attribute rules that were extracted.
+ * @returns The attribute-rules that were extracted.
  */
-export function extractAttribFromRule(rule: Rule): AttribRule[] {
-    const attribs: AttribRule[] = [];
-    const declarations: Comment | Declaration[] = [];
+export function extractAttribRules(rule: Rule): AttribRule[] {
+    return extractRules<AttribRule>(rule, /^-attr-(.+)$/, (decl: Declaration, match: RegExpExecArray) => {
+        const name = match[1];
+        const attr: AttribRule = {
+            name,
+        };
+        const value = (decl.value ?? '');
+        if (/^['"].*['"]$/g.test(value)) {
+            // If quoted, it is a set-value...
+            attr.value = value.replace(/^['"]|['"]$/g, '');
+        } else if (value === 'false') {
+            // If false, it is a remove-attribute...
+            attr.remove = true;
+        }
+        return attr;
+    });
+}
+
+/**
+ * Extract text-rules from rule.
+ * @param rule The rule to extract from.
+ * @returns The text-rules that were extracted.
+ */
+export function extractTextRules(rule: Rule): TextRule[] {
+    return extractRules<TextRule>(rule, /^-text-(.+)$/, (decl: Declaration, match: RegExpExecArray) => {
+        const name = match[1];
+        const value = (decl.value ?? '');
+        const text: TextRule = {
+            name, value,
+        };
+        return text;
+    });
+}
+
+export type RuleExtractor<T> = (decl: Declaration, match: RegExpExecArray) => T | undefined;
+
+export function extractRules<T>(rule: Rule, regexp: RegExp, fn: RuleExtractor<T>): T[] {
+    const rules: T[] = [];
     if (rule.declarations) {
         for (const decl of rule.declarations) {
             if (isRuleDeclaration(decl)) {
-                const match = /^-attr-(.+)$/.exec(decl.property ?? '');
+                const match = /^-text-(.+)$/.exec(decl.property ?? '');
                 if (match) {
-                    const name = match[1];
-                    const attr: AttribRule = {
-                        name,
-                    };
-                    const value = (decl.value ?? '');
-                    if (/^['"].*['"]$/g.test(value)) {
-                        // If quoted, it is a set-value...
-                        attr.value = value.replace(/^['"]|['"]$/g, '');
-                    } else if (value === 'false') {
-                        // If false, it is a remove-attribute...
-                        attr.remove = true;
+                    const result = fn(decl, match);
+                    if (result !== undefined) {
+                        rules.push(result);
                     }
-                    attribs.push(attr);
-                    continue;
                 }
             }
-            declarations.push(decl);
         }
-        rule.declarations = declarations;
     }
-    return attribs;
+    return rules;
 }

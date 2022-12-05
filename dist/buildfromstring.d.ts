@@ -3,6 +3,7 @@ export type MailTplOptions = {
     removeComments?: boolean;
     removeIds?: boolean;
     removeClasses?: boolean;
+    defaultTextStyles?: boolean;
     trim?: boolean;
     styles?: StyleSource[];
     source?: string;
@@ -16,5 +17,6 @@ export type MailingTemplate = {
     fromEmail(): string | undefined;
     fromName(): string | undefined;
     html(): string;
+    text(): string;
 };
 export declare function buildFromString(template: string, options?: MailTplOptions): MailingTemplate;

@@ -1,4 +1,4 @@
-import { Stylesheet, Rule, Node, Declaration, Comment } from 'css';
+import { Comment, Declaration, Node, Rule, Stylesheet } from 'css';
 /**
  * An attribute rule to be applied to the Element.
  */
@@ -6,6 +6,13 @@ export type AttribRule = {
     name: string;
     value?: string;
     remove?: boolean;
+};
+/**
+ * An text rule to be applied to the Element.
+ */
+export type TextRule = {
+    name: string;
+    value: string;
 };
 /**
  * A stylesheet source factory.
@@ -39,10 +46,18 @@ export declare function stringifyRuleProps(rule: Rule): string;
  * @returns The stringified rule.
  */
 export declare function stringifyRule(rule: Rule): string;
+export declare function extractNormalRules(rule: Rule): Rule;
 /**
- * Extract attributes from rule.
- * This removes the attribut rules from the rule.
+ * Extract attribute-rules from rule.
  * @param rule The rule to extract from.
- * @returns The attribute rules that were extracted.
+ * @returns The attribute-rules that were extracted.
  */
-export declare function extractAttribFromRule(rule: Rule): AttribRule[];
+export declare function extractAttribRules(rule: Rule): AttribRule[];
+/**
+ * Extract text-rules from rule.
+ * @param rule The rule to extract from.
+ * @returns The text-rules that were extracted.
+ */
+export declare function extractTextRules(rule: Rule): TextRule[];
+export type RuleExtractor<T> = (decl: Declaration, match: RegExpExecArray) => T | undefined;
+export declare function extractRules<T>(rule: Rule, regexp: RegExp, fn: RuleExtractor<T>): T[];
