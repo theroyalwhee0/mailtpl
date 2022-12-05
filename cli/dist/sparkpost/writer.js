@@ -44,6 +44,7 @@ class SparkpostWriter {
         const fromEmail = template.fromEmail() ?? '';
         const subject = template.subject() ?? '';
         const html = template.html();
+        const text = template.text();
         (0, utilities_1.throwIfEmpty)({ fromName, fromEmail, subject, id, name });
         try {
             const contents = {
@@ -54,7 +55,7 @@ class SparkpostWriter {
                     transactional,
                 },
                 content: {
-                    subject, html,
+                    subject, html, text,
                     from: {
                         email: fromEmail,
                         name: fromName,

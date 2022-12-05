@@ -31,6 +31,7 @@ export class SparkpostWriter implements ITemplateWriter {
         const fromEmail = template.fromEmail() ?? '';
         const subject = template.subject() ?? '';
         const html = template.html();
+        const text = template.text();
         throwIfEmpty({ fromName, fromEmail, subject, id, name });
         try {
             const contents: Sparkpost.CreateTemplate = {
@@ -41,7 +42,7 @@ export class SparkpostWriter implements ITemplateWriter {
                     transactional,
                 },
                 content: {
-                    subject, html,
+                    subject, html, text,
                     from: {
                         email: fromEmail,
                         name: fromName,

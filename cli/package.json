@@ -27,7 +27,7 @@
   },
   "dependencies": {
     "@theroyalwhee0/istype": "3.0.4",
-    "@theroyalwhee0/mailtpl": "0.1.1",
+    "@theroyalwhee0/mailtpl": "0.1.2",
     "mkdirp": "1.0.4",
     "sparkpost": "2.1.4",
     "yargs": "17.6.2"
