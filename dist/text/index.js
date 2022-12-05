@@ -46,12 +46,15 @@ function elementsToText($, nodes) {
             text += end;
         }
         else if (node.type === domelementtype_1.ElementType.Text) {
-            text += node.data.replace(/\s+/g, ' ');
-        }
-        else {
-            console.log('@@@@ node.type', node.type);
+            text += node.data.replace(/\s+/g, ' '); // Replace whitespace with single space.
         }
     });
+    text = text
+        .replace(/ +\n/gm, '\n') // Trim line ends.
+        .replace(/\n +/gm, '\n') // Trim line starts.
+        .replace(/^\n+/g, '') // Remove leading newlines.
+        .replace(/\n{2,}/g, '\n\n') // Replace 2+ newlines with a single newline.
+    ;
     return text;
 }
 function serializeText($) {

@@ -4,12 +4,12 @@ exports.styles = void 0;
 const css_1 = require("css");
 exports.styles = `
     h1 {
-        -text-begin: '*** ';
+        -text-begin: '\\n*** ';
         -text-end: ' ***\\n';
     }
 
     h2 {
-        -text-begin: '** ';
+        -text-begin: '\\n** ';
         -text-end: ' **\\n';
     }
 
@@ -17,7 +17,7 @@ exports.styles = `
     h4,
     h5,
     h6 {
-        -text-begin: '* ';
+        -text-begin: '\\n* ';
         -text-end: ' *\\n';
     }
 
@@ -31,13 +31,22 @@ exports.styles = `
         -text-begin: '\\n------------------------------------------------------------------------------\\n\\n';
     }
 
+    br {
+        -text-end: '\\n';
+    }
+
     a {
-        -text-end: ' ( ' attr(href) ' )';
+        -text-end: ' [ ' attr(href) ' ]';
+    } 
+
+    ol, ul {
+        -text-begin: '\\n';
+        -text-end: '\\n';
     }
 
     li {
-        -text-begin: '- ';
-        -text-end: '\\n';
+        -text-begin: '\\n- ';
+        -text-end: '';
     }
 
     img {
@@ -57,6 +66,7 @@ exports.styles = `
     article,
     section,
     div {
+        -text-begin: '\\n';
         -text-end: '\\n';
     }
 

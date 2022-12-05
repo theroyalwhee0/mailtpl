@@ -3,6 +3,12 @@
 ## [Unreleased]
 - None.
 
+## [0.1.2] - 2022-12-05
+- Add support for HTML-to-Text using CSS properties
+    - -text-begin
+    - -text-end
+    - -text-hide
+
 ## [0.1.1] - 2022-12-02
 - Add additional meta mail items
     - mail/name
