@@ -3,6 +3,10 @@
 ## [Unreleased]
 - None.
 
+## [0.1.3] - 2022-12-05
+- Remove postinstall peggy-gen.
+- Copy generated css-property.js on build.
+
 ## [0.1.2] - 2022-12-05
 - Add support for HTML-to-Text using CSS properties
     - -text-begin
