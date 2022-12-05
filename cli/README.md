@@ -6,9 +6,7 @@ A CLI for @theroyalwhee0/mailtpl [Mailing Template Library](https://github.com/t
 
 
 ## Installation
-`npm install @theroyalwhee0/mailtpl-cli`  
-*or*  
-`yarn add @theroyalwhee0/mailtpl-cli`  
+`npm install --global @theroyalwhee0/mailtpl-cli`  
 
 
 ## Testing.

@@ -1,14 +1,18 @@
 {
   "name": "@theroyalwhee0/mailtpl-cli",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Mailing Template CLI",
   "main": "dist/index.js",
   "author": "Adam Mill <hismajesty@theroyalwhee.com> (https://www.theroyalwhee.com)",
   "license": "Apache-2.0",
   "keywords": [
     "mailing",
-    "template"
+    "template",
+    "sparkpost"
   ],
+  "bin": {
+    "mailtpl": "dist/cli.js"
+  },
   "devDependencies": {
     "@types/chai": "4.3.4",
     "@types/mkdirp": "1.0.2",
