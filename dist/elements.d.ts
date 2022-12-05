@@ -1,4 +1,4 @@
-import { Cheerio, CheerioAPI, Element, Node } from 'cheerio';
+import { Cheerio, CheerioAPI, Element } from 'cheerio';
 import { Rule as CssRule, Stylesheet } from 'css';
 import { StyleSource } from './css';
 /**
@@ -33,12 +33,11 @@ export declare function getOrderedStyleElements($: CheerioAPI): Cheerio<Element>
  */
 export declare function getTextOrComment($: CheerioAPI, ele: Cheerio<Element>): string;
 export declare function getOrderedStyles($: CheerioAPI, supplied?: StyleSource[]): Stylesheet[];
-export declare function isComment(_idx: number, node: Node): boolean;
 export declare function removeCommentNodes($: CheerioAPI): void;
 export declare function removeElements($: CheerioAPI): void;
-export declare function applyNormalStyleRule($: CheerioAPI, ele: Cheerio<Element>, rule: CssRule): void;
-export declare function applyAttrStyleRule($: CheerioAPI, ele: Cheerio<Element>, rule: CssRule): void;
-export declare function applyStyleRule($: CheerioAPI, ele: Cheerio<Element>, rule: CssRule): void;
+export declare function applyNormalStyleRule($: CheerioAPI, ele: Cheerio<Element>, cssRule: CssRule): void;
+export declare function applyAttrStyleRule($: CheerioAPI, ele: Cheerio<Element>, cssRule: CssRule): void;
+export declare function applyTextStyleRule($: CheerioAPI, ele: Cheerio<Element>, cssRule: CssRule): void;
+export declare function applyStyleRule($: CheerioAPI, ele: Cheerio<Element>, cssRule: CssRule): void;
 export declare function applyStyles($: CheerioAPI, styles: Stylesheet[]): void;
-export declare function removeIdAttribs($: CheerioAPI): void;
-export declare function removeClassAttribs($: CheerioAPI): void;
+export declare function removeAttribute($: CheerioAPI, name: string): void;

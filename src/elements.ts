@@ -1,7 +1,7 @@
 import { isFunction, isString } from '@theroyalwhee0/istype';
 import { Cheerio, CheerioAPI, Element, Node } from 'cheerio';
 import { parse as parseCss, Rule as CssRule, Stylesheet } from 'css';
-import { extractAttribFromRule, isCssRule, stringifyRuleProps, StyleSource } from './css';
+import { extractAttribRules, extractNormalRules, extractTextRules, isCssRule, stringifyRuleProps, StyleSource } from './css';
 import * as meta from './contants';
 
 /**
@@ -86,11 +86,10 @@ export function getOrderedStyles($: CheerioAPI, supplied?: StyleSource[]): Style
     return styles;
 }
 
-export function isComment(_idx: number, node: Node): boolean {
-    return node.type === 'comment';
-}
-
 export function removeCommentNodes($: CheerioAPI) {
+    function isComment(_idx: number, node: Node): boolean {
+        return node.type === 'comment';
+    }
     // REF: https://github.com/cheeriojs/cheerio/issues/214
     $.root()
         .contents()
@@ -109,30 +108,40 @@ export function removeElements($: CheerioAPI) {
     root.find('style').remove();
 }
 
-export function applyNormalStyleRule($: CheerioAPI, ele: Cheerio<Element>, rule: CssRule) {
+export function applyNormalStyleRule($: CheerioAPI, ele: Cheerio<Element>, cssRule: CssRule) {
+    const rules = extractNormalRules(cssRule);
     const existing = (ele.attr('style') || '').replace(/;$/, '');
     const styles = existing +
         (existing ? ';' : '') +
-        stringifyRuleProps(rule).replace(/;$/, '');
+        stringifyRuleProps(rules).replace(/;$/, '');
     if (styles) {
         ele.attr('style', styles);
     }
 }
 
-export function applyAttrStyleRule($: CheerioAPI, ele: Cheerio<Element>, rule: CssRule) {
-    const attribs = extractAttribFromRule(rule);
-    attribs.forEach((attrib) => {
-        if (attrib.value !== undefined) {
-            ele.attr(attrib.name, attrib.value);
-        } else if (attrib.remove === true) {
-            ele.removeAttr(attrib.name);
+export function applyAttrStyleRule($: CheerioAPI, ele: Cheerio<Element>, cssRule: CssRule) {
+    const rules = extractAttribRules(cssRule);
+    rules.forEach((rule) => {
+        if (rule.value !== undefined) {
+            ele.attr(rule.name, rule.value);
+        } else if (rule.remove === true) {
+            ele.removeAttr(rule.name);
         }
     });
 }
 
-export function applyStyleRule($: CheerioAPI, ele: Cheerio<Element>, rule: CssRule) {
-    applyAttrStyleRule($, ele, rule);
-    applyNormalStyleRule($, ele, rule);
+export function applyTextStyleRule($: CheerioAPI, ele: Cheerio<Element>, cssRule: CssRule) {
+    const rules = extractTextRules(cssRule);
+    rules.forEach((rule) => {
+        const { name, value } = rule;
+        ele.attr(`-text-${name}`, value);
+    });
+}
+
+export function applyStyleRule($: CheerioAPI, ele: Cheerio<Element>, cssRule: CssRule) {
+    applyAttrStyleRule($, ele, cssRule);
+    applyTextStyleRule($, ele, cssRule);
+    applyNormalStyleRule($, ele, cssRule);
 }
 
 export function applyStyles($: CheerioAPI, styles: Stylesheet[]) {
@@ -146,9 +155,11 @@ export function applyStyles($: CheerioAPI, styles: Stylesheet[]) {
                 if (rule.selectors) {
                     for (const selector of rule.selectors) {
                         const elementsToStyle = $.root().find(selector);
-                        elementsToStyle.each((_idx, element) => {
-                            applyStyleRule($, $(element), rule);
-                        });
+                        if (elementsToStyle.length) {
+                            elementsToStyle.each((_idx, element) => {
+                                applyStyleRule($, $(element), rule);
+                            });
+                        }
                     }
                 }
             }
@@ -156,11 +167,6 @@ export function applyStyles($: CheerioAPI, styles: Stylesheet[]) {
     }
 }
 
-
-export function removeIdAttribs($: CheerioAPI) {
-    $.root().find('[id]').removeAttr('id');
-}
-
-export function removeClassAttribs($: CheerioAPI) {
-    $.root().find('[class]').removeAttr('class');
+export function removeAttribute($: CheerioAPI, name: string) {
+    $.root().find(`[${name}]`).removeAttr(name);
 }

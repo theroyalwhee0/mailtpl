@@ -23,7 +23,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.removeClassAttribs = exports.removeIdAttribs = exports.applyStyles = exports.applyStyleRule = exports.applyAttrStyleRule = exports.applyNormalStyleRule = exports.removeElements = exports.removeCommentNodes = exports.isComment = exports.getOrderedStyles = exports.getTextOrComment = exports.getOrderedStyleElements = exports.getFirstMetaValue = exports.getFirstMeta = void 0;
+exports.removeAttribute = exports.applyStyles = exports.applyStyleRule = exports.applyTextStyleRule = exports.applyAttrStyleRule = exports.applyNormalStyleRule = exports.removeElements = exports.removeCommentNodes = exports.getOrderedStyles = exports.getTextOrComment = exports.getOrderedStyleElements = exports.getFirstMetaValue = exports.getFirstMeta = void 0;
 const istype_1 = require("@theroyalwhee0/istype");
 const css_1 = require("css");
 const css_2 = require("./css");
@@ -113,11 +113,10 @@ function getOrderedStyles($, supplied) {
     return styles;
 }
 exports.getOrderedStyles = getOrderedStyles;
-function isComment(_idx, node) {
-    return node.type === 'comment';
-}
-exports.isComment = isComment;
 function removeCommentNodes($) {
+    function isComment(_idx, node) {
+        return node.type === 'comment';
+    }
     // REF: https://github.com/cheeriojs/cheerio/issues/214
     $.root()
         .contents()
@@ -127,6 +126,7 @@ function removeCommentNodes($) {
 exports.removeCommentNodes = removeCommentNodes;
 function removeElements($) {
     const root = $.root();
+    root.find(`meta[name=${meta.META_MAIL_NAME}]`).remove();
     root.find(`meta[name=${meta.META_MAIL_SUBJECT}]`).remove();
     root.find(`meta[name=${meta.META_MAIL_IDENT}]`).remove();
     root.find(`meta[name=${meta.META_MAIL_FROMNAME}]`).remove();
@@ -134,31 +134,41 @@ function removeElements($) {
     root.find('style').remove();
 }
 exports.removeElements = removeElements;
-function applyNormalStyleRule($, ele, rule) {
+function applyNormalStyleRule($, ele, cssRule) {
+    const rules = (0, css_2.extractNormalRules)(cssRule);
     const existing = (ele.attr('style') || '').replace(/;$/, '');
     const styles = existing +
         (existing ? ';' : '') +
-        (0, css_2.stringifyRuleProps)(rule).replace(/;$/, '');
+        (0, css_2.stringifyRuleProps)(rules).replace(/;$/, '');
     if (styles) {
         ele.attr('style', styles);
     }
 }
 exports.applyNormalStyleRule = applyNormalStyleRule;
-function applyAttrStyleRule($, ele, rule) {
-    const attribs = (0, css_2.extractAttribFromRule)(rule);
-    attribs.forEach((attrib) => {
-        if (attrib.value !== undefined) {
-            ele.attr(attrib.name, attrib.value);
+function applyAttrStyleRule($, ele, cssRule) {
+    const rules = (0, css_2.extractAttribRules)(cssRule);
+    rules.forEach((rule) => {
+        if (rule.value !== undefined) {
+            ele.attr(rule.name, rule.value);
         }
-        else if (attrib.remove === true) {
-            ele.removeAttr(attrib.name);
+        else if (rule.remove === true) {
+            ele.removeAttr(rule.name);
         }
     });
 }
 exports.applyAttrStyleRule = applyAttrStyleRule;
-function applyStyleRule($, ele, rule) {
-    applyAttrStyleRule($, ele, rule);
-    applyNormalStyleRule($, ele, rule);
+function applyTextStyleRule($, ele, cssRule) {
+    const rules = (0, css_2.extractTextRules)(cssRule);
+    rules.forEach((rule) => {
+        const { name, value } = rule;
+        ele.attr(`-text-${name}`, value);
+    });
+}
+exports.applyTextStyleRule = applyTextStyleRule;
+function applyStyleRule($, ele, cssRule) {
+    applyAttrStyleRule($, ele, cssRule);
+    applyTextStyleRule($, ele, cssRule);
+    applyNormalStyleRule($, ele, cssRule);
 }
 exports.applyStyleRule = applyStyleRule;
 function applyStyles($, styles) {
@@ -172,9 +182,13 @@ function applyStyles($, styles) {
                 if (rule.selectors) {
                     for (const selector of rule.selectors) {
                         const elementsToStyle = $.root().find(selector);
-                        elementsToStyle.each((_idx, element) => {
-                            applyStyleRule($, $(element), rule);
-                        });
+                        if (elementsToStyle.length) {
+                            console.log('@@ elementsToStyle', selector, 'found', elementsToStyle.length, 'elements');
+                            elementsToStyle.each((_idx, element) => {
+                                console.log('@@ element', element.name, '"', $(element).text(), '"');
+                                applyStyleRule($, $(element), rule);
+                            });
+                        }
                     }
                 }
             }
@@ -182,12 +196,8 @@ function applyStyles($, styles) {
     }
 }
 exports.applyStyles = applyStyles;
-function removeIdAttribs($) {
-    $.root().find('[id]').removeAttr('id');
+function removeAttribute($, name) {
+    $.root().find(`[${name}]`).removeAttr(name);
 }
-exports.removeIdAttribs = removeIdAttribs;
-function removeClassAttribs($) {
-    $.root().find('[class]').removeAttr('class');
-}
-exports.removeClassAttribs = removeClassAttribs;
+exports.removeAttribute = removeAttribute;
 //# sourceMappingURL=elements.js.map

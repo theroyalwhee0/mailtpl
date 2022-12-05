@@ -259,4 +259,38 @@ describe('buildFromString', () => {
         expect(result.ident()).to.equal('microcassette-2022');
         expect(result.source()).to.equal('https://en.wikipedia.org/wiki/Microcassette');
     });
+    it('should build text from HTML', () => {
+        const result = buildFromString(`
+            <h1>A Microcassette is significantly smaller than a Compact Cassette</h1>
+            <p>
+                Microcassettes have mostly been used for recording voice.<br>
+                In particular, they are commonly used in 
+                <a href="https://en.wikipedia.org/wiki/Dictation_machine">dictation machines</a>
+                and answering machines.
+            </p>
+            <hr>
+            <h3>Capacity</h3>
+            <ul>
+                <li>MC60 (30 min per side at 2.4 cm/s)</li>
+                <li>MC10</li>
+                <li>MC15</li>
+                <li>MC30</li>
+            </ul>
+        `);
+        const text = result.text();
+        const expected = '*** A Microcassette is significantly smaller than a Compact Cassette ***\n' +
+            '\n' +
+            'Microcassettes have mostly been used for recording voice.\n' +
+            'In particular, they are commonly used in dictation machines ' +
+            '[ https://en.wikipedia.org/wiki/Dictation_machine ]' +
+            ' and answering machines.\n\n' +
+            '------------------------------------------------------------------------------\n\n' +
+            '* Capacity *\n\n' +
+            '- MC60 (30 min per side at 2.4 cm/s)\n' +
+            '- MC10\n' +
+            '- MC15\n' +
+            '- MC30\n' +
+            '';
+        expect(text).to.equal(expected);
+    });
 });
