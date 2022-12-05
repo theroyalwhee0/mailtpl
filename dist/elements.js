@@ -183,9 +183,7 @@ function applyStyles($, styles) {
                     for (const selector of rule.selectors) {
                         const elementsToStyle = $.root().find(selector);
                         if (elementsToStyle.length) {
-                            console.log('@@ elementsToStyle', selector, 'found', elementsToStyle.length, 'elements');
                             elementsToStyle.each((_idx, element) => {
-                                console.log('@@ element', element.name, '"', $(element).text(), '"');
                                 applyStyleRule($, $(element), rule);
                             });
                         }
