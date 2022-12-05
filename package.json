@@ -39,6 +39,7 @@
     "test-watch": "mocha --reporter dot --watch --watch-files test/**/*.test.ts --watch-files src/**/*.ts --require ts-node/register test/**/*.test.ts",
     "dryrun": "npm prune && npm audit && npm run rebuild && npm run lint && npm test && npm publish --dry-run",
     "audit": "npm audit --omit dev",
-    "peggy": "peggy src/text/css-property.pegjs -o src/text/css-property.js && sed -i '1s;^;/* eslint-disable */\\n;' src/text/css-property.js"
+    "peggy-gen": "peggy src/text/css-property.pegjs -o src/text/css-property.js && sed -i '1s;^;/* eslint-disable */\\n;' src/text/css-property.js",
+    "postinstall": "npm run peggy-gen"
   }
 }
