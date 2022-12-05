@@ -1,9 +1,10 @@
-import { buildFromString, MailingTemplate } from '@theroyalwhee0/mailtpl';
+import { buildFromString } from '@theroyalwhee0/mailtpl';
 import fs from 'node:fs/promises';
 import path from 'path';
-import { getArgv } from './argv';
+import { getArgv, WriterChoice } from './argv';
 import { FileWriter } from './file/writer';
 import { group, tag } from './iter';
+import { SparkpostWriter } from './sparkpost/writer';
 import { ITemplateWriter } from './writer';
 
 export async function main() {
@@ -11,8 +12,10 @@ export async function main() {
     let writer: ITemplateWriter;
     if (argv.output !== undefined) {
         writer = new FileWriter(argv.output);
+    } else if (argv.writer === WriterChoice.Sparkpost) {
+        writer = new SparkpostWriter();
     } else {
-        throw new Error(`No template writer specified.`);
+        throw new Error('No template writer specified.');
     }
     // Group source files.
     const files = group(tag(argv.files ?? [], {
