@@ -2,12 +2,12 @@ import { parse } from 'css';
 
 export const styles = `
     h1 {
-        -text-begin: '*** ';
+        -text-begin: '\\n*** ';
         -text-end: ' ***\\n';
     }
 
     h2 {
-        -text-begin: '** ';
+        -text-begin: '\\n** ';
         -text-end: ' **\\n';
     }
 
@@ -15,7 +15,7 @@ export const styles = `
     h4,
     h5,
     h6 {
-        -text-begin: '* ';
+        -text-begin: '\\n* ';
         -text-end: ' *\\n';
     }
 
@@ -29,13 +29,22 @@ export const styles = `
         -text-begin: '\\n------------------------------------------------------------------------------\\n\\n';
     }
 
+    br {
+        -text-end: '\\n';
+    }
+
     a {
-        -text-end: ' ( ' attr(href) ' )';
+        -text-end: ' [ ' attr(href) ' ]';
+    } 
+
+    ol, ul {
+        -text-begin: '\\n';
+        -text-end: '\\n';
     }
 
     li {
-        -text-begin: '- ';
-        -text-end: '\\n';
+        -text-begin: '\\n- ';
+        -text-end: '';
     }
 
     img {
@@ -55,6 +64,7 @@ export const styles = `
     article,
     section,
     div {
+        -text-begin: '\\n';
         -text-end: '\\n';
     }
 

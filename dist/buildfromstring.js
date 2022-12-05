@@ -30,7 +30,7 @@ exports.buildFromString = void 0;
 const cheerio_1 = require("cheerio");
 const meta = __importStar(require("./contants"));
 const elements_1 = require("./elements");
-const serialize_1 = require("./html/serialize");
+const serialize_1 = require("./serialize");
 const text_1 = require("./text");
 const text_styles_1 = __importDefault(require("./text/text-styles"));
 function buildFromString(template, options) {

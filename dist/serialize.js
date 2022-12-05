@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.serializeHtml = void 0;
-const elements_1 = require("../elements");
+const elements_1 = require("./elements");
 function serializeHtml($, trim) {
     (0, elements_1.removeAttribute)($, '-text-hide');
     (0, elements_1.removeAttribute)($, '-text-begin');

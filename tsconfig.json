@@ -17,12 +17,9 @@
     "outDir": "dist/",
     "lib": [
       "ES2020"
-    ],
+    ]
   },
   "include": [
     "src/**/*.ts"
-  ],
-  "files": [
-    "src/text/css-property.js"
   ]
 }

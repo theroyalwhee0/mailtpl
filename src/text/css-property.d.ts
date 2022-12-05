@@ -1,6 +1,7 @@
 export declare type ParseAttr = {
     attr: string
 }
+
 export declare type ParseStatement = string | ParseAttr
 
 export declare type ParseResult = ParseStatement[]

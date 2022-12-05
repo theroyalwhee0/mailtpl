@@ -2,7 +2,7 @@ import { load as cheerioLoad } from 'cheerio';
 import * as meta from './contants';
 import { StyleSource } from './css';
 import { applyStyles, getFirstMetaValue, getOrderedStyles, removeAttribute, removeCommentNodes, removeElements } from './elements';
-import { serializeHtml } from './html/serialize';
+import { serializeHtml } from './serialize';
 import { serializeText } from './text';
 import textStyles from './text/text-styles';
 

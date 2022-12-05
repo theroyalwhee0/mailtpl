@@ -41,11 +41,14 @@ function elementsToText($: CheerioAPI, nodes: Cheerio<AnyNode>): string {
             text += elementsToText($, ele.contents());
             text += end;
         } else if (node.type === ElementType.Text) {
-            text += node.data.replace(/\s+/g, ' ');
-        } else {
-            console.log('@@@@ node.type', node.type);
+            text += node.data.replace(/\s+/g, ' '); // Replace whitespace with single space.
         }
     });
+    text = text
+        .replace(/\n +/gm, '\n')    // Trim line starts.
+        .replace(/^\n+/g, '')      // Remove leading newlines.
+        .replace(/\n{2,}/g, '\n\n')   // Replace 2+ newlines with a single newline.
+        ;
     return text;
 }
 

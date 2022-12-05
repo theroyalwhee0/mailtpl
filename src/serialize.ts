@@ -1,5 +1,5 @@
 import { CheerioAPI } from 'cheerio';
-import { removeAttribute } from '../elements';
+import { removeAttribute } from './elements';
 
 export function serializeHtml($: CheerioAPI, trim: boolean) {
     removeAttribute($, '-text-hide');

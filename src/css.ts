@@ -135,7 +135,7 @@ export function extractRules<T>(rule: Rule, regexp: RegExp, fn: RuleExtractor<T>
     if (rule.declarations) {
         for (const decl of rule.declarations) {
             if (isRuleDeclaration(decl)) {
-                const match = /^-text-(.+)$/.exec(decl.property ?? '');
+                const match = regexp.exec(decl.property ?? '');
                 if (match) {
                     const result = fn(decl, match);
                     if (result !== undefined) {
