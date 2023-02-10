@@ -4,6 +4,7 @@ export interface ArgvShape {
     $0: string;
     files: string[];
     output: string | undefined;
+    'name-prefix': string | undefined;
 }
 export declare enum WriterChoice {
     File = "file",
