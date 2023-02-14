@@ -1,3 +1,4 @@
+import * as dotenv from 'dotenv';
 import { buildFromString } from '@theroyalwhee0/mailtpl';
 import fs from 'node:fs/promises';
 import path from 'path';
@@ -8,6 +9,7 @@ import { SparkpostWriter } from './sparkpost/writer';
 import { ITemplateWriter } from './writer';
 
 export async function main() {
+    dotenv.config();
     const argv = getArgv();
     const namePrefix = argv['name-prefix'] ?? '';
     let writer: ITemplateWriter;
