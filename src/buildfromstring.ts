@@ -2,21 +2,56 @@ import { load as cheerioLoad } from 'cheerio';
 import * as meta from './contants';
 import { StyleSource } from './css';
 import { applyStyles, getFirstMetaValue, getOrderedStyles, removeAttribute, removeCommentNodes, removeElements } from './elements';
+import { replacementFactory } from './replacement';
 import { serializeHtml } from './serialize';
 import { serializeText } from './text';
 import textStyles from './text/text-styles';
 
+/**
+ * Mail Template Options.
+ */
 export type MailTplOptions = {
-    removeComments?: boolean, // Defaults to true.
-    removeIds?: boolean, // Defaults to true.
-    removeClasses?: boolean, // Defaults to true.    
-    defaultTextStyles?: boolean // Defaults to true.
-    trim?: boolean, // Defaults to true.
+    /**
+     * Remove comment nodes? Defaults to true.
+     */
+    removeComments?: boolean,
+    /**
+     * Remove 'id' attributes? Defaults to true.
+     */
+    removeIds?: boolean,
+    /**
+     * Remove 'class' attributes? Defaults to true.
+     */
+    removeClasses?: boolean,
+    /**
+     * Apply default text stylesheet? Defaults to true.
+     */
+    defaultTextStyles?: boolean,
+    /**
+     * Trim results? Defaults to true.
+     */
+    trim?: boolean,
+    /**
+     * Additional stylesheets to use. Added at top of document.
+     */
     styles?: StyleSource[]
+    /**
+     * Source name.
+     */
     source?: string,
+    /**
+     * Source identity.
+     */
     ident?: string,
+    /**
+     * Replacement data.
+     */
+    data?: Readonly<Record<string, string>>,
 };
 
+/**
+ * Mail Template.
+ */
 export type MailingTemplate = {
     source(): string | undefined,
     subject(): string | undefined,
@@ -28,6 +63,12 @@ export type MailingTemplate = {
     text(): string,
 };
 
+/**
+ * Build a Mailing Template from a string.
+ * @param template The template string.
+ * @param options Template options.
+ * @returns The Mail Template.
+ */
 export function buildFromString(template: string, options?: MailTplOptions): MailingTemplate {
     const trim = options?.trim ?? true;
     const removeComments = options?.removeComments ?? true;
@@ -47,6 +88,7 @@ export function buildFromString(template: string, options?: MailTplOptions): Mai
         styles = [textStyles].concat(styles);
     }
     applyStyles($, styles);
+    const [tryReplace, tryReplaceOptional] = tryReplaceFactory(options);
     removeElements($);
     if (removeIds) {
         removeAttribute($, 'id');
@@ -70,19 +112,46 @@ export function buildFromString(template: string, options?: MailTplOptions): Mai
             return ident;
         },
         fromEmail() {
-            return fromEmail;
+            return tryReplaceOptional(fromEmail);
         },
         fromName() {
-            return fromName;
+            return tryReplaceOptional(fromName);
         },
         html() {
-            return html;
+            return tryReplace(html);
         },
         text() {
-            return text;
+            return tryReplace(text);
         },
         subject() {
-            return subject;
+            return tryReplaceOptional(subject);
         },
     };
+}
+
+type TryReplace = (value: string) => string;
+type TryReplaceOptional = (value: string | undefined) => string | undefined;
+/**
+ * Build replacer functions for string & string|undefined from options.
+ */
+function tryReplaceFactory(options?: MailTplOptions): [TryReplace, TryReplaceOptional] {
+    const data = options?.data;
+    let tryReplace: TryReplace;
+    if (data) {
+        const replacer = replacementFactory();
+        tryReplace = (value: string): string => {
+            return value ? replacer(value, data) : value;
+        };
+    } else {
+        tryReplace = (value: string): string => {
+            return value;
+        };
+    }
+    const tryReplaceOptional = (value: string | undefined): string | undefined => {
+        if (value === undefined) {
+            return undefined;
+        }
+        return tryReplace(value);
+    };
+    return [tryReplace, tryReplaceOptional];
 }

@@ -33,6 +33,12 @@ const elements_1 = require("./elements");
 const serialize_1 = require("./serialize");
 const text_1 = require("./text");
 const text_styles_1 = __importDefault(require("./text/text-styles"));
+/**
+ * Build a Mailing Template from a string.
+ * @param template The template string.
+ * @param options Template options.
+ * @returns The Mail Template.
+ */
 function buildFromString(template, options) {
     const trim = options?.trim ?? true;
     const removeComments = options?.removeComments ?? true;

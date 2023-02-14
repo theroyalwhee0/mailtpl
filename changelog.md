@@ -1,7 +1,7 @@
 # Changelog
 
 ## [Unreleased]
-- None.
+- Add initial jsdocs.
 
 ## [0.1.3] - 2022-12-05
 - Remove postinstall peggy-gen.
