@@ -30,9 +30,16 @@ exports.buildFromString = void 0;
 const cheerio_1 = require("cheerio");
 const meta = __importStar(require("./contants"));
 const elements_1 = require("./elements");
+const replacement_1 = require("./replacement");
 const serialize_1 = require("./serialize");
 const text_1 = require("./text");
 const text_styles_1 = __importDefault(require("./text/text-styles"));
+/**
+ * Build a Mailing Template from a string.
+ * @param template The template string.
+ * @param options Template options.
+ * @returns The Mail Template.
+ */
 function buildFromString(template, options) {
     const trim = options?.trim ?? true;
     const removeComments = options?.removeComments ?? true;
@@ -52,6 +59,7 @@ function buildFromString(template, options) {
         styles = [text_styles_1.default].concat(styles);
     }
     (0, elements_1.applyStyles)($, styles);
+    const [tryReplace, tryReplaceOptional] = tryReplaceFactory(options);
     (0, elements_1.removeElements)($);
     if (removeIds) {
         (0, elements_1.removeAttribute)($, 'id');
@@ -75,21 +83,46 @@ function buildFromString(template, options) {
             return ident;
         },
         fromEmail() {
-            return fromEmail;
+            return tryReplaceOptional(fromEmail);
         },
         fromName() {
-            return fromName;
+            return tryReplaceOptional(fromName);
         },
         html() {
-            return html;
+            return tryReplace(html);
         },
         text() {
-            return text;
+            return tryReplace(text);
         },
         subject() {
-            return subject;
+            return tryReplaceOptional(subject);
         },
     };
 }
 exports.buildFromString = buildFromString;
+/**
+ * Build replacer functions for string & string|undefined from options.
+ */
+function tryReplaceFactory(options) {
+    const data = options?.data;
+    let tryReplace;
+    if (data) {
+        const replacer = (0, replacement_1.replacementFactory)();
+        tryReplace = (value) => {
+            return value ? replacer(value, data) : value;
+        };
+    }
+    else {
+        tryReplace = (value) => {
+            return value;
+        };
+    }
+    const tryReplaceOptional = (value) => {
+        if (value === undefined) {
+            return undefined;
+        }
+        return tryReplace(value);
+    };
+    return [tryReplace, tryReplaceOptional];
+}
 //# sourceMappingURL=buildfromstring.js.map

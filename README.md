@@ -12,7 +12,11 @@ A mail template library. Build templates in HTML and CSS and compile into HTML w
 
 
 ## Testing.
-Running ```npm run test``` will run the test suite. Running ```npm run test-watch``` will run the test suite in watch mode.
+Running `npm run test` will run the test suite. Running `npm run test-watch` will run the test suite in watch mode.
+
+
+## Generated Code
+Running `npm run peggy-gen` will regenerate `src/text/css-property.js` from `src/text/css-property.pegjs` using [Peggy](https://peggyjs.org/).
 
 
 ## Links

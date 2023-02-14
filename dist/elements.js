@@ -31,6 +31,7 @@ const meta = __importStar(require("./contants"));
 /**
  * Get the first meta element matching the name.
  * Throws if there are multiple.
+ * @ignore
  * @param $ The document.
  * @param name The name of the metadata.
  * @returns The metadata element.
@@ -46,6 +47,7 @@ exports.getFirstMeta = getFirstMeta;
 /**
  * Get the value of the meta element matching the name.
  * Throws if there are multiple.
+ * @ignore
  * @param $ The document.
  * @param name The name of the metadata.
  * @returns The metadata element's value.
@@ -62,6 +64,7 @@ exports.getFirstMetaValue = getFirstMetaValue;
 /**
  * Get any style elemnts to be processed.
  * Must maintain order.
+ * @ignore
  * @param $ The document.
  * @returns The style elements.
  */
@@ -72,6 +75,7 @@ exports.getOrderedStyleElements = getOrderedStyleElements;
 /**
  * Get text or comment contents.
  * Removes HTML comment from the contents.
+ * @ignore
  * @param $ The document.
  * @param ele The element.
  * @returns The contents.
@@ -80,6 +84,13 @@ function getTextOrComment($, ele) {
     return ele.text().replace(/(^\s*<!--\s*|\s*-->\s*$)/g, '');
 }
 exports.getTextOrComment = getTextOrComment;
+/**
+ * Get stylesheets in document order.
+ * @ignore
+ * @param $ The document.
+ * @param supplied Additional supplied stylesheets, added first. Optional.
+ * @returns The stylesheets in order.
+ */
 function getOrderedStyles($, supplied) {
     const styleElements = getOrderedStyleElements($);
     const styles = [];
@@ -113,6 +124,11 @@ function getOrderedStyles($, supplied) {
     return styles;
 }
 exports.getOrderedStyles = getOrderedStyles;
+/**
+ * Remove comment nodes from document.
+ * @ignore
+ * @param $ The document.
+ */
 function removeCommentNodes($) {
     function isComment(_idx, node) {
         return node.type === 'comment';
@@ -124,6 +140,11 @@ function removeCommentNodes($) {
         .remove();
 }
 exports.removeCommentNodes = removeCommentNodes;
+/**
+ * Remove various elements.
+ * @ignore
+ * @param $ The document.
+ */
 function removeElements($) {
     const root = $.root();
     root.find(`meta[name=${meta.META_MAIL_NAME}]`).remove();
@@ -134,6 +155,13 @@ function removeElements($) {
     root.find('style').remove();
 }
 exports.removeElements = removeElements;
+/**
+ * Apply normal styles from stylesheets to an element.
+ * @ignore
+ * @param $ The document.
+ * @param ele The element to apply to.
+ * @param cssRule The rule to apply.
+ */
 function applyNormalStyleRule($, ele, cssRule) {
     const rules = (0, css_2.extractNormalRules)(cssRule);
     const existing = (ele.attr('style') || '').replace(/;$/, '');
@@ -145,6 +173,13 @@ function applyNormalStyleRule($, ele, cssRule) {
     }
 }
 exports.applyNormalStyleRule = applyNormalStyleRule;
+/**
+ * Apply attribute styles from stylesheets to an element.
+ * @ignore
+ * @param $ The document.
+ * @param ele The element to apply to.
+ * @param cssRule The rule to apply.
+ */
 function applyAttrStyleRule($, ele, cssRule) {
     const rules = (0, css_2.extractAttribRules)(cssRule);
     rules.forEach((rule) => {
@@ -157,6 +192,13 @@ function applyAttrStyleRule($, ele, cssRule) {
     });
 }
 exports.applyAttrStyleRule = applyAttrStyleRule;
+/**
+ * Apply text styles from stylesheets to an element.
+ * @ignore
+ * @param $ The document.
+ * @param ele The element to apply to.
+ * @param cssRule The rule to apply.
+ */
 function applyTextStyleRule($, ele, cssRule) {
     const rules = (0, css_2.extractTextRules)(cssRule);
     rules.forEach((rule) => {
@@ -165,12 +207,25 @@ function applyTextStyleRule($, ele, cssRule) {
     });
 }
 exports.applyTextStyleRule = applyTextStyleRule;
+/**
+ * Apply all styles from stylesheets to an element.
+ * @ignore
+ * @param $ The document.
+ * @param ele The element to apply to.
+ * @param cssRule The rule to apply.
+ */
 function applyStyleRule($, ele, cssRule) {
     applyAttrStyleRule($, ele, cssRule);
     applyTextStyleRule($, ele, cssRule);
     applyNormalStyleRule($, ele, cssRule);
 }
 exports.applyStyleRule = applyStyleRule;
+/**
+ * Apply stylesheets to a document.
+ * @ignore
+ * @param $ The document.
+ * @param styles The stylesheets to apply.
+ */
 function applyStyles($, styles) {
     for (const style of styles) {
         if (!style.stylesheet) {
@@ -194,6 +249,12 @@ function applyStyles($, styles) {
     }
 }
 exports.applyStyles = applyStyles;
+/**
+ * Remove attributes from a document by name.
+ * @ignore
+ * @param $ The document.
+ * @param name The attribute name.
+ */
 function removeAttribute($, name) {
     $.root().find(`[${name}]`).removeAttr(name);
 }
