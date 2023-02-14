@@ -38,7 +38,7 @@
     "lint": "eslint .",
     "test": "mocha --require ts-node/register test/**/*.test.ts",
     "test-watch": "mocha --reporter dot --watch --watch-files src/**/*.ts --watch-files test/**/*.test.ts --require ts-node/register test/**/*.test.ts",
-    "dryrun": "npm prune && npm audit && npm run rebuild && npm run lint && npm test && npm publish --dry-run",
+    "dryrun": "npm prune && npm audit && npm run rebuild && npm run lint && npm test && npm run docs && npm publish --dry-run",
     "audit": "npm audit --omit dev",
     "docs": "jsdoc --pedantic --readme ./README.md --recurse --destination docs/ dist/",
     "peggy-gen": "peggy src/text/css-property.pegjs -o src/text/css-property.js && sed -i '1s;^;/* eslint-disable */\\n;' src/text/css-property.js"

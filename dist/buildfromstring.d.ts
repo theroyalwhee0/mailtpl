@@ -35,6 +35,10 @@ export type MailTplOptions = {
      * Source identity.
      */
     ident?: string;
+    /**
+     * Replacement data.
+     */
+    data?: Readonly<Record<string, string>>;
 };
 /**
  * Mail Template.
