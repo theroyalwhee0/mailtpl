@@ -1,6 +1,6 @@
 {
   "name": "@theroyalwhee0/mailtpl",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "Mail Template Library",
   "main": "dist/index.js",
   "author": "Adam Mill <hismajesty@theroyalwhee.com> (https://www.theroyalwhee.com)",
@@ -35,7 +35,7 @@
     "rebuild": "npm run clean && tsc --build --force && cp src/text/css-property.js src/text/css-property.d.ts dist/text/",
     "clean": "mkdir -p ./dist && [ ! -z \"$(find ./dist/ -maxdepth 1 -type f -print -quit)\" ] && rm -R ./dist/*; true",
     "clean-docs": "mkdir -p ./docs && [ ! -z \"$(find ./docs/ -maxdepth 1 -type f -print -quit)\" ] && rm -R ./docs/*; true",
-    "docs": "jsdoc --pedantic --readme ./README.md --recurse --destination docs/ dist/",
+    "docs": "jsdoc --configure .jsdoc.conf.json",
     "redocs": "npm run clean-docs && npm run docs",
     "watch": "npm run build && tsc --watch",
     "lint": "eslint .",

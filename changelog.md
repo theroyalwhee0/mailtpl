@@ -8,7 +8,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.2.1] - 2023-01-14
+
+## [0.2.2] - 2023-01-15
+### Fixed
+- Fix build to use .jsdoc.conf.json so that docs do not have dates.
+- Fix date in changelog.
+
+## [0.2.1] - 2023-01-15
 ### Added
 - Support name and ident prefixes.
 ### Fixed
