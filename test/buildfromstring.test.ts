@@ -44,11 +44,46 @@ describe('buildFromString', () => {
         expect(result.fromName()).to.equal('Rumble');
         expect(result.html()).to.equal('');
     });
+    it('should support mail/name metadata values', () => {
+        const result = buildFromString(`
+            <meta name='mail/name' value='microcassettes'>
+        `);
+        expect(result.name()).to.equal('microcassettes');
+        expect(result.html()).to.equal('');
+    });
+    it('should support name prefix', () => {
+        const result = buildFromString(`
+            <meta name='mail/name' value='microcassettes'>
+        `, {
+            namePrefix: 'dev-',
+        });
+        expect(result.name()).to.equal('dev-microcassettes');
+        expect(result.html()).to.equal('');
+    });
+    it('should support name prefix even when there is no name', () => {
+        const result = buildFromString(`
+            <meta name='mail/ident' value='micro'>
+        `, {
+            namePrefix: 'dev-',
+        });
+        expect(result.name()).to.equal(undefined);
+        expect(result.ident()).to.equal('micro');
+        expect(result.html()).to.equal('');
+    });
     it('should support mail/ident metadata values', () => {
         const result = buildFromString(`
             <meta name='mail/ident' value='microcassettes-2022'>
         `);
         expect(result.ident()).to.equal('microcassettes-2022');
+        expect(result.html()).to.equal('');
+    });
+    it('should support ident prefix', () => {
+        const result = buildFromString(`
+            <meta name='mail/ident' value='microcassettes-2022'>
+        `, {
+            identPrefix: 'production-',
+        });
+        expect(result.ident()).to.equal('production-microcassettes-2022');
         expect(result.html()).to.equal('');
     });
     it('should support mail/from-name metadata values', () => {

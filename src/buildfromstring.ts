@@ -44,6 +44,14 @@ export type MailTplOptions = {
      */
     ident?: string,
     /**
+     * Name prefix.
+     */
+    namePrefix?: string
+    /**
+     * Ident prefix.
+     */,
+    identPrefix?: string,
+    /**
      * Replacement data.
      */
     data?: Readonly<Record<string, string>>,
@@ -76,6 +84,8 @@ export function buildFromString(template: string, options?: MailTplOptions): Mai
     const removeClasses = options?.removeClasses ?? true;
     const defaultTextStyles = options?.defaultTextStyles ?? true;
     const contents = trim ? template.trim() : template;
+    const namePrefix = options?.namePrefix ?? '';
+    const identPrefix = options?.identPrefix ?? '';
     const source = options?.source ?? '';
     const $ = cheerioLoad(contents, null, false);
     const subject = getFirstMetaValue($, meta.META_MAIL_SUBJECT);
@@ -88,7 +98,7 @@ export function buildFromString(template: string, options?: MailTplOptions): Mai
         styles = [textStyles].concat(styles);
     }
     applyStyles($, styles);
-    const [tryReplace, tryReplaceOptional] = tryReplaceFactory(options);
+    const [tryReplace, tryReplaceOptional] = tryReplaceFactory(options?.data);
     removeElements($);
     if (removeIds) {
         removeAttribute($, 'id');
@@ -106,10 +116,10 @@ export function buildFromString(template: string, options?: MailTplOptions): Mai
             return source;
         },
         name() {
-            return name;
+            return name === undefined ? undefined : namePrefix + name;
         },
         ident() {
-            return ident;
+            return ident === undefined ? undefined : identPrefix + ident;
         },
         fromEmail() {
             return tryReplaceOptional(fromEmail);
@@ -129,18 +139,24 @@ export function buildFromString(template: string, options?: MailTplOptions): Mai
     };
 }
 
-type TryReplace = (value: string) => string;
-type TryReplaceOptional = (value: string | undefined) => string | undefined;
+/**
+ * Try Replace function types.
+ */
+export type TryReplace = (value: string) => string;
+export type TryReplaceOptional = (value: string | undefined) => string | undefined;
+
 /**
  * Build replacer functions for string & string|undefined from options.
+ * @ignore
+ * @param options The mail template options.
+ * @returns Tuple of replacer and optional-replacer functions.
  */
-function tryReplaceFactory(options?: MailTplOptions): [TryReplace, TryReplaceOptional] {
-    const data = options?.data;
+function tryReplaceFactory(data?: Record<string, string>): [TryReplace, TryReplaceOptional] {
     let tryReplace: TryReplace;
     if (data) {
         const replacer = replacementFactory();
         tryReplace = (value: string): string => {
-            return value ? replacer(value, data) : value;
+            return replacer(value, data);
         };
     } else {
         tryReplace = (value: string): string => {

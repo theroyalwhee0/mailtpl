@@ -36,6 +36,11 @@ export type MailTplOptions = {
      */
     ident?: string;
     /**
+     * Name prefix.
+     */
+    namePrefix?: string;
+    identPrefix?: string;
+    /**
      * Replacement data.
      */
     data?: Readonly<Record<string, string>>;
@@ -60,3 +65,8 @@ export type MailingTemplate = {
  * @returns The Mail Template.
  */
 export declare function buildFromString(template: string, options?: MailTplOptions): MailingTemplate;
+/**
+ * Try Replace function types.
+ */
+export type TryReplace = (value: string) => string;
+export type TryReplaceOptional = (value: string | undefined) => string | undefined;

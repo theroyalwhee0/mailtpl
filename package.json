@@ -1,6 +1,6 @@
 {
   "name": "@theroyalwhee0/mailtpl",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Mail Template Library",
   "main": "dist/index.js",
   "author": "Adam Mill <hismajesty@theroyalwhee.com> (https://www.theroyalwhee.com)",
@@ -34,13 +34,15 @@
     "build": "tsc && cp src/text/css-property.js src/text/css-property.d.ts dist/text/",
     "rebuild": "npm run clean && tsc --build --force && cp src/text/css-property.js src/text/css-property.d.ts dist/text/",
     "clean": "mkdir -p ./dist && [ ! -z \"$(find ./dist/ -maxdepth 1 -type f -print -quit)\" ] && rm -R ./dist/*; true",
+    "clean-docs": "mkdir -p ./docs && [ ! -z \"$(find ./docs/ -maxdepth 1 -type f -print -quit)\" ] && rm -R ./docs/*; true",
+    "docs": "jsdoc --pedantic --readme ./README.md --recurse --destination docs/ dist/",
+    "redocs": "npm run clean-docs && npm run docs",
     "watch": "npm run build && tsc --watch",
     "lint": "eslint .",
     "test": "mocha --require ts-node/register test/**/*.test.ts",
     "test-watch": "mocha --reporter dot --watch --watch-files src/**/*.ts --watch-files test/**/*.test.ts --require ts-node/register test/**/*.test.ts",
-    "dryrun": "npm prune && npm audit && npm run rebuild && npm run lint && npm test && npm run docs && npm publish --dry-run",
+    "dryrun": "npm prune && npm audit && npm run rebuild && npm run lint && npm test && npm run redocs && npm run redocs && npm publish --dry-run",
     "audit": "npm audit --omit dev",
-    "docs": "jsdoc --pedantic --readme ./README.md --recurse --destination docs/ dist/",
     "peggy-gen": "peggy src/text/css-property.pegjs -o src/text/css-property.js && sed -i '1s;^;/* eslint-disable */\\n;' src/text/css-property.js"
   }
 }

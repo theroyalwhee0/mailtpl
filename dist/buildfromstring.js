@@ -47,6 +47,8 @@ function buildFromString(template, options) {
     const removeClasses = options?.removeClasses ?? true;
     const defaultTextStyles = options?.defaultTextStyles ?? true;
     const contents = trim ? template.trim() : template;
+    const namePrefix = options?.namePrefix ?? '';
+    const identPrefix = options?.identPrefix ?? '';
     const source = options?.source ?? '';
     const $ = (0, cheerio_1.load)(contents, null, false);
     const subject = (0, elements_1.getFirstMetaValue)($, meta.META_MAIL_SUBJECT);
@@ -59,7 +61,7 @@ function buildFromString(template, options) {
         styles = [text_styles_1.default].concat(styles);
     }
     (0, elements_1.applyStyles)($, styles);
-    const [tryReplace, tryReplaceOptional] = tryReplaceFactory(options);
+    const [tryReplace, tryReplaceOptional] = tryReplaceFactory(options?.data);
     (0, elements_1.removeElements)($);
     if (removeIds) {
         (0, elements_1.removeAttribute)($, 'id');
@@ -77,10 +79,10 @@ function buildFromString(template, options) {
             return source;
         },
         name() {
-            return name;
+            return name === undefined ? undefined : namePrefix + name;
         },
         ident() {
-            return ident;
+            return ident === undefined ? undefined : identPrefix + ident;
         },
         fromEmail() {
             return tryReplaceOptional(fromEmail);
@@ -102,14 +104,16 @@ function buildFromString(template, options) {
 exports.buildFromString = buildFromString;
 /**
  * Build replacer functions for string & string|undefined from options.
+ * @ignore
+ * @param options The mail template options.
+ * @returns Tuple of replacer and optional-replacer functions.
  */
-function tryReplaceFactory(options) {
-    const data = options?.data;
+function tryReplaceFactory(data) {
     let tryReplace;
     if (data) {
         const replacer = (0, replacement_1.replacementFactory)();
         tryReplace = (value) => {
-            return value ? replacer(value, data) : value;
+            return replacer(value, data);
         };
     }
     else {
