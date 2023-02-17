@@ -1,6 +1,6 @@
 {
   "name": "@theroyalwhee0/mailtpl-cli",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Mailing Template CLI",
   "main": "dist/index.js",
   "author": "Adam Mill <hismajesty@theroyalwhee.com> (https://www.theroyalwhee.com)",
