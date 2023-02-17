@@ -27,28 +27,41 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.main = void 0;
-const dotenv = __importStar(require("dotenv"));
 const mailtpl_1 = require("@theroyalwhee0/mailtpl");
+const dotenv = __importStar(require("dotenv"));
 const promises_1 = __importDefault(require("node:fs/promises"));
 const path_1 = __importDefault(require("path"));
 const argv_1 = require("./argv");
 const writer_1 = require("./file/writer");
 const iter_1 = require("./iter");
 const writer_2 = require("./sparkpost/writer");
+const utilities_1 = require("./utilities");
 async function main() {
+    console.log('[Mail Template]');
     dotenv.config();
     const argv = (0, argv_1.getArgv)();
-    const namePrefix = argv['name-prefix'] ?? '';
+    const namePrefix = argv.namePrefix;
+    const identPrefix = argv.identPrefix;
+    const outputText = argv.text;
     let writer;
+    let writerName = 'unknown';
     if (argv.output !== undefined) {
-        writer = new writer_1.FileWriter(argv.output);
+        writer = new writer_1.FileWriter({
+            folder: argv.output,
+            outputText,
+        });
+        writerName = argv_1.WriterChoice.File;
     }
     else if (argv.writer === argv_1.WriterChoice.Sparkpost) {
-        writer = new writer_2.SparkpostWriter(namePrefix);
+        writer = new writer_2.SparkpostWriter({
+            outputText,
+        });
+        writerName = argv_1.WriterChoice.Sparkpost;
     }
     else {
         throw new Error('No template writer specified.');
     }
+    console.log(`> Using "${writerName}" writer`);
     // Group source files.
     const files = (0, iter_1.group)((0, iter_1.tag)(argv.files ?? [], {
         css: (value) => /\.css$/.test(value),
@@ -62,16 +75,32 @@ async function main() {
     }
     // Setup writer.
     await writer.setup();
+    const htmlFiles = files.html ?? [];
+    console.log(`> Processing ${htmlFiles.length} HTML files.`);
+    // Load replacement/template data.
+    let data = undefined;
+    if (argv.data) {
+        data = await (0, utilities_1.loadJSON)(argv.data);
+    }
     // Process HTML files.
-    for (const fileName of files.html ?? []) {
+    for (const fileName of htmlFiles) {
         const ident = path_1.default.basename(fileName).replace(/\.html?$/, '');
         const content = await promises_1.default.readFile(fileName, 'utf8');
-        const template = (0, mailtpl_1.buildFromString)(content, {
-            styles, ident,
-            source: fileName,
-        });
-        await writer.write(template);
+        try {
+            const template = (0, mailtpl_1.buildFromString)(content, {
+                styles, ident,
+                source: fileName,
+                namePrefix,
+                identPrefix,
+                data,
+            });
+            await writer.write(template);
+        }
+        catch (err) {
+            console.error(err);
+        }
     }
+    console.log('> Done');
 }
 exports.main = main;
 //# sourceMappingURL=main.js.map

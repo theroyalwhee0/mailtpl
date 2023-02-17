@@ -13,18 +13,24 @@ var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
-var _FileWriter_folder, _FileWriter_ext;
+var _FileWriter_folder, _FileWriter_html, _FileWriter_text, _FileWriter_outputText;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.FileWriter = void 0;
 const mkdirp_1 = __importDefault(require("mkdirp"));
 const promises_1 = __importDefault(require("node:fs/promises"));
 const node_path_1 = __importDefault(require("node:path"));
+const dotHtml = '.html';
+const dotText = '.txt';
 class FileWriter {
-    constructor(folder, ext = '.html') {
+    constructor(options) {
         _FileWriter_folder.set(this, void 0);
-        _FileWriter_ext.set(this, void 0);
-        __classPrivateFieldSet(this, _FileWriter_folder, node_path_1.default.resolve(folder), "f");
-        __classPrivateFieldSet(this, _FileWriter_ext, ext, "f");
+        _FileWriter_html.set(this, void 0);
+        _FileWriter_text.set(this, void 0);
+        _FileWriter_outputText.set(this, void 0);
+        __classPrivateFieldSet(this, _FileWriter_folder, node_path_1.default.resolve(options.folder), "f");
+        __classPrivateFieldSet(this, _FileWriter_html, options.html ?? dotHtml, "f");
+        __classPrivateFieldSet(this, _FileWriter_text, options.text ?? dotText, "f");
+        __classPrivateFieldSet(this, _FileWriter_outputText, options.outputText ?? false, "f");
     }
     async setup() {
         await (0, mkdirp_1.default)(__classPrivateFieldGet(this, _FileWriter_folder, "f"));
@@ -34,11 +40,16 @@ class FileWriter {
         if (!name) {
             throw new Error('Template has no ident to use as a filename.');
         }
-        const filePath = node_path_1.default.resolve(__classPrivateFieldGet(this, _FileWriter_folder, "f"), name) + __classPrivateFieldGet(this, _FileWriter_ext, "f");
+        const htmlPath = node_path_1.default.resolve(__classPrivateFieldGet(this, _FileWriter_folder, "f"), name) + __classPrivateFieldGet(this, _FileWriter_html, "f");
         const html = template.html();
-        await promises_1.default.writeFile(filePath, html, 'utf8');
+        await promises_1.default.writeFile(htmlPath, html, 'utf8');
+        if (__classPrivateFieldGet(this, _FileWriter_outputText, "f")) {
+            const textPath = node_path_1.default.resolve(__classPrivateFieldGet(this, _FileWriter_folder, "f"), name) + __classPrivateFieldGet(this, _FileWriter_text, "f");
+            const text = template.text();
+            await promises_1.default.writeFile(textPath, text, 'utf8');
+        }
     }
 }
 exports.FileWriter = FileWriter;
-_FileWriter_folder = new WeakMap(), _FileWriter_ext = new WeakMap();
+_FileWriter_folder = new WeakMap(), _FileWriter_html = new WeakMap(), _FileWriter_text = new WeakMap(), _FileWriter_outputText = new WeakMap();
 //# sourceMappingURL=writer.js.map
