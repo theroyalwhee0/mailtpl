@@ -7,6 +7,7 @@ export interface ArgvShape {
     $0: string;
     files: string[];
     output: string | undefined
+    'name-prefix': string | undefined,
 }
 
 export enum WriterChoice {
@@ -23,6 +24,9 @@ export function getArgv(value?: string[], exit = true): ArgvShape {
             'Compile the source files.', (yargs) => {
                 return yargs.positional('files', {
                     describe: 'Source files to process. May include CSS files.',
+                }).option('name-prefix', {
+                    describe: 'Add the prefix to template names.',
+                    type: 'string',
                 }).option('output', {
                     alias: 'o',
                     describe: 'Output results as files to specified folder.',

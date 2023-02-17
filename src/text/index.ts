@@ -45,10 +45,11 @@ function elementsToText($: CheerioAPI, nodes: Cheerio<AnyNode>): string {
         }
     });
     text = text
-        .replace(/ +\n/gm, '\n')        // Trim line ends.
-        .replace(/\n +/gm, '\n')        // Trim line starts.
-        .replace(/^\n+/g, '')           // Remove leading newlines.
-        .replace(/\n{2,}/g, '\n\n')     // Replace 2+ newlines with a single newline.
+        .replace(/ +\n/gm, '\n')            // Trim line ends.
+        .replace(/\n +/gm, '\n')            // Trim line starts.
+        .replace(/^\n+/g, '')               // Remove leading newlines.
+        .replace(/\n{2,}/g, '\n\n')         // Replace 2+ newlines with a single newline.
+        .replace(/(^[ \t]+|[ \t]+$)/, '')   // Trim spaces and tabs from start and end.
         ;
     return text;
 }

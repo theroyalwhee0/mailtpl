@@ -13,7 +13,7 @@ var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
-var _SparkpostWriter_sparkpost;
+var _SparkpostWriter_sparkpost, _SparkpostWriter_namePrefix;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SparkpostWriter = exports.CODE_TEMPLATE_ALREADY_EXISTS = void 0;
 const sparkpost_1 = __importDefault(require("sparkpost"));
@@ -26,11 +26,17 @@ function sleep() {
     });
 }
 class SparkpostWriter {
-    constructor() {
+    constructor(namePrefix) {
         _SparkpostWriter_sparkpost.set(this, void 0);
+        _SparkpostWriter_namePrefix.set(this, void 0);
+        __classPrivateFieldSet(this, _SparkpostWriter_namePrefix, namePrefix ?? '', "f");
     }
     async setup() {
-        const apiKey = process.env.SPARKPOST_API_KEY || '';
+        // NOTE: SPARKPOST_API_KEY is deprecated.
+        const apiKey = process.env.SPARKPOST_APIKEY ?? process.env.SPARKPOST_API_KEY ?? '';
+        if (!apiKey) {
+            throw new Error('SPARKPOST_APIKEY is required.');
+        }
         __classPrivateFieldSet(this, _SparkpostWriter_sparkpost, new sparkpost_1.default(apiKey), "f");
     }
     async write(template) {
@@ -39,7 +45,7 @@ class SparkpostWriter {
         const click_tracking = false;
         const published = true;
         const id = template.ident() ?? '';
-        const name = template.name() ?? '';
+        const name = __classPrivateFieldGet(this, _SparkpostWriter_namePrefix, "f") + (template.name() ?? '');
         const fromName = template.fromName() ?? '';
         const fromEmail = template.fromEmail() ?? '';
         const subject = template.subject() ?? '';
@@ -76,7 +82,7 @@ class SparkpostWriter {
     }
 }
 exports.SparkpostWriter = SparkpostWriter;
-_SparkpostWriter_sparkpost = new WeakMap();
+_SparkpostWriter_sparkpost = new WeakMap(), _SparkpostWriter_namePrefix = new WeakMap();
 async function sparkpostUpsert(sparkpost, contents) {
     try {
         const result = await sparkpost.templates.create(contents);

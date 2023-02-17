@@ -18,6 +18,9 @@ function getArgv(value, exit = true) {
         .command('$0 [options] <files..>', 'Compile the source files.', (yargs) => {
         return yargs.positional('files', {
             describe: 'Source files to process. May include CSS files.',
+        }).option('name-prefix', {
+            describe: 'Add the prefix to template names.',
+            type: 'string',
         }).option('output', {
             alias: 'o',
             describe: 'Output results as files to specified folder.',

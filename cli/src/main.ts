@@ -11,11 +11,12 @@ import { ITemplateWriter } from './writer';
 export async function main() {
     dotenv.config();
     const argv = getArgv();
+    const namePrefix = argv['name-prefix'] ?? '';
     let writer: ITemplateWriter;
     if (argv.output !== undefined) {
         writer = new FileWriter(argv.output);
     } else if (argv.writer === WriterChoice.Sparkpost) {
-        writer = new SparkpostWriter();
+        writer = new SparkpostWriter(namePrefix);
     } else {
         throw new Error('No template writer specified.');
     }

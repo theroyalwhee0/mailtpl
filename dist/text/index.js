@@ -54,6 +54,7 @@ function elementsToText($, nodes) {
         .replace(/\n +/gm, '\n') // Trim line starts.
         .replace(/^\n+/g, '') // Remove leading newlines.
         .replace(/\n{2,}/g, '\n\n') // Replace 2+ newlines with a single newline.
+        .replace(/(^[ \t]+|[ \t]+$)/, '') // Trim spaces and tabs from start and end.
     ;
     return text;
 }

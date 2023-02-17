@@ -38,12 +38,13 @@ const writer_2 = require("./sparkpost/writer");
 async function main() {
     dotenv.config();
     const argv = (0, argv_1.getArgv)();
+    const namePrefix = argv['name-prefix'] ?? '';
     let writer;
     if (argv.output !== undefined) {
         writer = new writer_1.FileWriter(argv.output);
     }
     else if (argv.writer === argv_1.WriterChoice.Sparkpost) {
-        writer = new writer_2.SparkpostWriter();
+        writer = new writer_2.SparkpostWriter(namePrefix);
     }
     else {
         throw new Error('No template writer specified.');

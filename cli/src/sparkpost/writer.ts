@@ -14,9 +14,18 @@ function sleep(): Promise<void> {
 
 export class SparkpostWriter implements ITemplateWriter {
     #sparkpost: Sparkpost;
+    #namePrefix: string;
+
+    constructor(namePrefix?: string) {
+        this.#namePrefix = namePrefix ?? '';
+    }
 
     async setup() {
-        const apiKey = process.env.SPARKPOST_API_KEY || '';
+        // NOTE: SPARKPOST_API_KEY is deprecated.
+        const apiKey = process.env.SPARKPOST_APIKEY ?? process.env.SPARKPOST_API_KEY ?? '';
+        if (!apiKey) {
+            throw new Error('SPARKPOST_APIKEY is required.');
+        }
         this.#sparkpost = new Sparkpost(apiKey);
     }
 
@@ -26,7 +35,7 @@ export class SparkpostWriter implements ITemplateWriter {
         const click_tracking = false;
         const published = true;
         const id = template.ident() ?? '';
-        const name = template.name() ?? '';
+        const name = template.name() ?? ''; // this.#namePrefix +
         const fromName = template.fromName() ?? '';
         const fromEmail = template.fromEmail() ?? '';
         const subject = template.subject() ?? '';

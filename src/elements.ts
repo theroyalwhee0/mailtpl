@@ -7,6 +7,7 @@ import * as meta from './contants';
 /**
  * Get the first meta element matching the name.
  * Throws if there are multiple.
+ * @ignore
  * @param $ The document.
  * @param name The name of the metadata.
  * @returns The metadata element.
@@ -22,6 +23,7 @@ export function getFirstMeta($: CheerioAPI, name: string) {
 /**
  * Get the value of the meta element matching the name.
  * Throws if there are multiple.
+ * @ignore
  * @param $ The document.
  * @param name The name of the metadata.
  * @returns The metadata element's value.
@@ -38,6 +40,7 @@ export function getFirstMetaValue($: CheerioAPI, name: string): undefined | stri
 /**
  * Get any style elemnts to be processed.
  * Must maintain order.
+ * @ignore
  * @param $ The document.
  * @returns The style elements.
  */
@@ -48,6 +51,7 @@ export function getOrderedStyleElements($: CheerioAPI) {
 /**
  * Get text or comment contents.
  * Removes HTML comment from the contents.
+ * @ignore
  * @param $ The document.
  * @param ele The element.
  * @returns The contents.
@@ -56,6 +60,13 @@ export function getTextOrComment($: CheerioAPI, ele: Cheerio<Element>): string {
     return ele.text().replace(/(^\s*<!--\s*|\s*-->\s*$)/g, '');
 }
 
+/**
+ * Get stylesheets in document order.
+ * @ignore
+ * @param $ The document.
+ * @param supplied Additional supplied stylesheets, added first. Optional.
+ * @returns The stylesheets in order.
+ */
 export function getOrderedStyles($: CheerioAPI, supplied?: StyleSource[]): Stylesheet[] {
     const styleElements = getOrderedStyleElements($);
     const styles: Stylesheet[] = [];
@@ -86,6 +97,11 @@ export function getOrderedStyles($: CheerioAPI, supplied?: StyleSource[]): Style
     return styles;
 }
 
+/**
+ * Remove comment nodes from document.
+ * @ignore
+ * @param $ The document.
+ */
 export function removeCommentNodes($: CheerioAPI) {
     function isComment(_idx: number, node: Node): boolean {
         return node.type === 'comment';
@@ -97,7 +113,11 @@ export function removeCommentNodes($: CheerioAPI) {
         .remove();
 }
 
-
+/**
+ * Remove various elements.
+ * @ignore
+ * @param $ The document.
+ */
 export function removeElements($: CheerioAPI) {
     const root = $.root();
     root.find(`meta[name=${meta.META_MAIL_NAME}]`).remove();
@@ -108,6 +128,13 @@ export function removeElements($: CheerioAPI) {
     root.find('style').remove();
 }
 
+/**
+ * Apply normal styles from stylesheets to an element.
+ * @ignore
+ * @param $ The document.
+ * @param ele The element to apply to.
+ * @param cssRule The rule to apply.
+ */
 export function applyNormalStyleRule($: CheerioAPI, ele: Cheerio<Element>, cssRule: CssRule) {
     const rules = extractNormalRules(cssRule);
     const existing = (ele.attr('style') || '').replace(/;$/, '');
@@ -119,6 +146,13 @@ export function applyNormalStyleRule($: CheerioAPI, ele: Cheerio<Element>, cssRu
     }
 }
 
+/**
+ * Apply attribute styles from stylesheets to an element.
+ * @ignore
+ * @param $ The document.
+ * @param ele The element to apply to.
+ * @param cssRule The rule to apply.
+ */
 export function applyAttrStyleRule($: CheerioAPI, ele: Cheerio<Element>, cssRule: CssRule) {
     const rules = extractAttribRules(cssRule);
     rules.forEach((rule) => {
@@ -130,6 +164,13 @@ export function applyAttrStyleRule($: CheerioAPI, ele: Cheerio<Element>, cssRule
     });
 }
 
+/**
+ * Apply text styles from stylesheets to an element.
+ * @ignore
+ * @param $ The document.
+ * @param ele The element to apply to.
+ * @param cssRule The rule to apply.
+ */
 export function applyTextStyleRule($: CheerioAPI, ele: Cheerio<Element>, cssRule: CssRule) {
     const rules = extractTextRules(cssRule);
     rules.forEach((rule) => {
@@ -138,12 +179,25 @@ export function applyTextStyleRule($: CheerioAPI, ele: Cheerio<Element>, cssRule
     });
 }
 
+/**
+ * Apply all styles from stylesheets to an element.
+ * @ignore
+ * @param $ The document.
+ * @param ele The element to apply to.
+ * @param cssRule The rule to apply.
+ */
 export function applyStyleRule($: CheerioAPI, ele: Cheerio<Element>, cssRule: CssRule) {
     applyAttrStyleRule($, ele, cssRule);
     applyTextStyleRule($, ele, cssRule);
     applyNormalStyleRule($, ele, cssRule);
 }
 
+/**
+ * Apply stylesheets to a document.
+ * @ignore
+ * @param $ The document.
+ * @param styles The stylesheets to apply.
+ */
 export function applyStyles($: CheerioAPI, styles: Stylesheet[]) {
     for (const style of styles) {
         if (!style.stylesheet) {
@@ -167,6 +221,12 @@ export function applyStyles($: CheerioAPI, styles: Stylesheet[]) {
     }
 }
 
+/**
+ * Remove attributes from a document by name.
+ * @ignore
+ * @param $ The document.
+ * @param name The attribute name.
+ */
 export function removeAttribute($: CheerioAPI, name: string) {
     $.root().find(`[${name}]`).removeAttr(name);
 }

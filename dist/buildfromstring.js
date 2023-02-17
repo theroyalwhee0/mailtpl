@@ -30,9 +30,16 @@ exports.buildFromString = void 0;
 const cheerio_1 = require("cheerio");
 const meta = __importStar(require("./contants"));
 const elements_1 = require("./elements");
+const replacement_1 = require("./replacement");
 const serialize_1 = require("./serialize");
 const text_1 = require("./text");
 const text_styles_1 = __importDefault(require("./text/text-styles"));
+/**
+ * Build a Mailing Template from a string.
+ * @param template The template string.
+ * @param options Template options.
+ * @returns The Mail Template.
+ */
 function buildFromString(template, options) {
     const trim = options?.trim ?? true;
     const removeComments = options?.removeComments ?? true;
@@ -40,6 +47,8 @@ function buildFromString(template, options) {
     const removeClasses = options?.removeClasses ?? true;
     const defaultTextStyles = options?.defaultTextStyles ?? true;
     const contents = trim ? template.trim() : template;
+    const namePrefix = options?.namePrefix ?? '';
+    const identPrefix = options?.identPrefix ?? '';
     const source = options?.source ?? '';
     const $ = (0, cheerio_1.load)(contents, null, false);
     const subject = (0, elements_1.getFirstMetaValue)($, meta.META_MAIL_SUBJECT);
@@ -52,6 +61,7 @@ function buildFromString(template, options) {
         styles = [text_styles_1.default].concat(styles);
     }
     (0, elements_1.applyStyles)($, styles);
+    const [tryReplace, tryReplaceOptional] = tryReplaceFactory(options?.data);
     (0, elements_1.removeElements)($);
     if (removeIds) {
         (0, elements_1.removeAttribute)($, 'id');
@@ -69,27 +79,54 @@ function buildFromString(template, options) {
             return source;
         },
         name() {
-            return name;
+            return name === undefined ? undefined : namePrefix + name;
         },
         ident() {
-            return ident;
+            return ident === undefined ? undefined : identPrefix + ident;
         },
         fromEmail() {
-            return fromEmail;
+            return tryReplaceOptional(fromEmail);
         },
         fromName() {
-            return fromName;
+            return tryReplaceOptional(fromName);
         },
         html() {
-            return html;
+            return tryReplace(html);
         },
         text() {
-            return text;
+            return tryReplace(text);
         },
         subject() {
-            return subject;
+            return tryReplaceOptional(subject);
         },
     };
 }
 exports.buildFromString = buildFromString;
+/**
+ * Build replacer functions for string & string|undefined from options.
+ * @ignore
+ * @param options The mail template options.
+ * @returns Tuple of replacer and optional-replacer functions.
+ */
+function tryReplaceFactory(data) {
+    let tryReplace;
+    if (data) {
+        const replacer = (0, replacement_1.replacementFactory)();
+        tryReplace = (value) => {
+            return replacer(value, data);
+        };
+    }
+    else {
+        tryReplace = (value) => {
+            return value;
+        };
+    }
+    const tryReplaceOptional = (value) => {
+        if (value === undefined) {
+            return undefined;
+        }
+        return tryReplace(value);
+    };
+    return [tryReplace, tryReplaceOptional];
+}
 //# sourceMappingURL=buildfromstring.js.map
