@@ -13,27 +13,41 @@ var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
-var _SparkpostWriter_sparkpost, _SparkpostWriter_namePrefix;
+var _SparkpostWriter_outputText, _SparkpostWriter_sparkpost;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SparkpostWriter = exports.CODE_TEMPLATE_ALREADY_EXISTS = void 0;
+const istype_1 = require("@theroyalwhee0/istype");
 const sparkpost_1 = __importDefault(require("sparkpost"));
 const utilities_1 = require("../utilities");
+/**
+ * Code returned when a template already exists.
+ */
 exports.CODE_TEMPLATE_ALREADY_EXISTS = '3030';
+/**
+ * The amount of time to sleep in ms.
+ */
 const sleepTime = 100;
+/**
+ * Sleep to prevent overuse of API.
+ */
 function sleep() {
     return new Promise((resolve) => {
         setTimeout(() => resolve(), sleepTime);
     });
 }
 class SparkpostWriter {
-    constructor(namePrefix) {
+    constructor(options) {
+        _SparkpostWriter_outputText.set(this, void 0);
         _SparkpostWriter_sparkpost.set(this, void 0);
-        _SparkpostWriter_namePrefix.set(this, void 0);
-        __classPrivateFieldSet(this, _SparkpostWriter_namePrefix, namePrefix ?? '', "f");
+        __classPrivateFieldSet(this, _SparkpostWriter_outputText, options?.outputText ?? true, "f");
     }
     async setup() {
-        // NOTE: SPARKPOST_API_KEY is deprecated.
-        const apiKey = process.env.SPARKPOST_APIKEY ?? process.env.SPARKPOST_API_KEY ?? '';
+        let apiKey = process.env.SPARKPOST_APIKEY ?? '';
+        if (!apiKey && (0, istype_1.isString)(process.env.SPARKPOST_API_KEY)) {
+            // NOTE: SPARKPOST_API_KEY is deprecated.
+            console.warn('! "SPARKPOST_API_KEY" is deprecated, please use "SPARKPOST_APIKEY"');
+            apiKey = process.env.SPARKPOST_API_KEY;
+        }
         if (!apiKey) {
             throw new Error('SPARKPOST_APIKEY is required.');
         }
@@ -45,12 +59,12 @@ class SparkpostWriter {
         const click_tracking = false;
         const published = true;
         const id = template.ident() ?? '';
-        const name = __classPrivateFieldGet(this, _SparkpostWriter_namePrefix, "f") + (template.name() ?? '');
+        const name = template.name() ?? '';
         const fromName = template.fromName() ?? '';
         const fromEmail = template.fromEmail() ?? '';
         const subject = template.subject() ?? '';
         const html = template.html();
-        const text = template.text();
+        const text = __classPrivateFieldGet(this, _SparkpostWriter_outputText, "f") ? template.text() : '';
         (0, utilities_1.throwIfEmpty)({ fromName, fromEmail, subject, id, name });
         try {
             const contents = {
@@ -82,7 +96,7 @@ class SparkpostWriter {
     }
 }
 exports.SparkpostWriter = SparkpostWriter;
-_SparkpostWriter_sparkpost = new WeakMap(), _SparkpostWriter_namePrefix = new WeakMap();
+_SparkpostWriter_outputText = new WeakMap(), _SparkpostWriter_sparkpost = new WeakMap();
 async function sparkpostUpsert(sparkpost, contents) {
     try {
         const result = await sparkpost.templates.create(contents);
@@ -95,7 +109,9 @@ async function sparkpostUpsert(sparkpost, contents) {
             if (error) {
                 if (error.code === exports.CODE_TEMPLATE_ALREADY_EXISTS) {
                     const id = contents.id;
-                    const result = await sparkpost.templates.update(id, contents);
+                    const result = await sparkpost.templates.update(id, contents, {
+                        update_published: true,
+                    });
                     await sleep();
                     return result;
                 }

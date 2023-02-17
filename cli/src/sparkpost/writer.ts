@@ -1,28 +1,47 @@
+import { isString } from '@theroyalwhee0/istype';
 import { MailingTemplate } from '@theroyalwhee0/mailtpl';
 import Sparkpost, { ErrorWithDescription } from 'sparkpost';
 import { throwIfEmpty } from '../utilities';
 import { ITemplateWriter } from '../writer';
 
+/**
+ * Code returned when a template already exists.
+ */
 export const CODE_TEMPLATE_ALREADY_EXISTS = '3030';
+
+/**
+ * The amount of time to sleep in ms.
+ */
 const sleepTime = 100;
 
+/**
+ * Sleep to prevent overuse of API.
+ */
 function sleep(): Promise<void> {
     return new Promise<void>((resolve) => {
         setTimeout(() => resolve(), sleepTime);
     });
 }
 
-export class SparkpostWriter implements ITemplateWriter {
-    #sparkpost: Sparkpost;
-    #namePrefix: string;
+export type SparkpostWriterOptions = {
+    outputText?: boolean
+};
 
-    constructor(namePrefix?: string) {
-        this.#namePrefix = namePrefix ?? '';
+export class SparkpostWriter implements ITemplateWriter {
+    #outputText: boolean;
+    #sparkpost: Sparkpost;
+
+    constructor(options?: SparkpostWriterOptions) {
+        this.#outputText = options?.outputText ?? true;
     }
 
     async setup() {
-        // NOTE: SPARKPOST_API_KEY is deprecated.
-        const apiKey = process.env.SPARKPOST_APIKEY ?? process.env.SPARKPOST_API_KEY ?? '';
+        let apiKey = process.env.SPARKPOST_APIKEY ?? '';
+        if (!apiKey && isString(process.env.SPARKPOST_API_KEY)) {
+            // NOTE: SPARKPOST_API_KEY is deprecated.
+            console.warn('! "SPARKPOST_API_KEY" is deprecated, please use "SPARKPOST_APIKEY"');
+            apiKey = process.env.SPARKPOST_API_KEY;
+        }
         if (!apiKey) {
             throw new Error('SPARKPOST_APIKEY is required.');
         }
@@ -35,12 +54,12 @@ export class SparkpostWriter implements ITemplateWriter {
         const click_tracking = false;
         const published = true;
         const id = template.ident() ?? '';
-        const name = template.name() ?? ''; // this.#namePrefix +
+        const name = template.name() ?? '';
         const fromName = template.fromName() ?? '';
         const fromEmail = template.fromEmail() ?? '';
         const subject = template.subject() ?? '';
         const html = template.html();
-        const text = template.text();
+        const text = this.#outputText ? template.text() : '';
         throwIfEmpty({ fromName, fromEmail, subject, id, name });
         try {
             const contents: Sparkpost.CreateTemplate = {
@@ -82,7 +101,9 @@ async function sparkpostUpsert(sparkpost: Sparkpost, contents: Sparkpost.CreateT
             if (error) {
                 if (error.code === CODE_TEMPLATE_ALREADY_EXISTS) {
                     const id = contents.id as string;
-                    const result = await sparkpost.templates.update(id, contents);
+                    const result = await sparkpost.templates.update(id, contents, {
+                        update_published: true,
+                    });
                     await sleep();
                     return result;
                 }
