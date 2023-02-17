@@ -1,6 +1,6 @@
 {
   "name": "@theroyalwhee0/mailtpl",
-  "version": "0.1.3",
+  "version": "0.2.3",
   "description": "Mail Template Library",
   "main": "dist/index.js",
   "author": "Adam Mill <hismajesty@theroyalwhee.com> (https://www.theroyalwhee.com)",
