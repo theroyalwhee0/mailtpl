@@ -371,4 +371,61 @@ describe('buildFromString', () => {
             );
         });
     });
+    it('should build properly trimmed text', () => {
+        const result = buildFromString(`
+        <span>
+            <span>
+                <span>
+                    <h2>A Microcassette is significantly smaller than a Compact Cassette</h2>
+                </span>
+            </span>
+        </span>
+        `);
+        const text = result.text();
+        const expected = '** A Microcassette is significantly smaller than a Compact Cassette **\n';
+        expect(text).to.equal(expected);
+    });
+    describe('should support replacements', () => {
+        it('in meta values', () => {
+            const data = {
+                'query': 'Microcassettes',
+            };
+            const result = buildFromString(`
+                <meta name='mail/subject' value='Have you heard of $$query$$?'>
+            `, {
+                data,
+            });
+            expect(result.subject()).to.equal('Have you heard of Microcassettes?');
+            expect(result.ident()).to.equal(undefined);
+            expect(result.fromEmail()).to.equal(undefined);
+            expect(result.fromName()).to.equal(undefined);
+            expect(result.html()).to.equal('');
+        });
+        it('in the HTML', () => {
+            const data = {
+                'size': 'significantly smaller',
+                'usage': 'recording voice',
+            };
+            const result = buildFromString(`
+                <meta name='mail/subject' value='You have heard of Microcassettes?'>
+                <h1>A Microcassette is $$size$$ than a Compact Cassette</h1>
+                <p>
+                    Microcassettes have mostly been used for $$usage$$. 
+                    In particular, they are commonly used in dictation machines 
+                    and answering machines.
+                </p>
+            `, {
+                data,
+            });
+            expect(result.subject()).to.equal('You have heard of Microcassettes?');
+            expect(result.html()).to.equal(
+                '<h1>A Microcassette is significantly smaller than a Compact Cassette</h1>\n' +
+                '                <p>\n' +
+                '                    Microcassettes have mostly been used for recording voice. \n' +
+                '                    In particular, they are commonly used in dictation machines \n' +
+                '                    and answering machines.\n' +
+                '                </p>'
+            );
+        });
+    });
 });
